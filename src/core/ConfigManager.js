@@ -11,7 +11,7 @@ export class ConfigManager {
         cacheDir: path.join(os.homedir(), '.empresa-sdk'),
         
         // URL do servidor de especificações
-        specServerUrl: process.env.SDK_SPEC_SERVER_URL || 'https://api.empresa.com/sdk/spec',
+        specServerUrl: process.env.SDK_SPEC_SERVER_URL || 'https://api.consultasdeveiculos.com/sdk/spec',
         
         // Timeout padrão para requisições (ms)
         timeout: 30000,
