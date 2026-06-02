@@ -1,0 +1,36 @@
+{
+  "name": "@datacube/sdk",
+  "version": "1.0.0",
+  "description": "SDK Node.js dinâmica baseada em coleções Postman",
+  "main": "src/index.js",
+  "type": "module",
+  "bin": {
+    "datacube-sdk": "./src/cli/index.js"
+  },
+  "scripts": {
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "update": "node ./src/cli/index.js update",
+    "version": "node ./src/cli/index.js version",
+    "doctor": "node ./src/cli/index.js doctor",
+    "clear-cache": "node ./src/cli/index.js clear-cache"
+  },
+  "keywords": [
+    "sdk",
+    "postman",
+    "api",
+    "dynamic",
+    "runtime"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "undici": "^6.0.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}

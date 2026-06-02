@@ -1,0 +1,34 @@
+# Dependencies
+node_modules/
+
+# Coverage
+coverage/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment - NUNCA VERSIONAR TOKENS!
+.env
+.env.local
+.env.*.local
+.env.production
+.env.development
+
+# Build
+dist/
+build/
+
+# Cache
+.npm
+.cache
