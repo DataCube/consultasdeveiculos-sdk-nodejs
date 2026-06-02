@@ -8,6 +8,7 @@
     "datacube-sdk": "./src/cli/index.js"
   },
   "scripts": {
+    "postinstall": "node ./scripts/postinstall.js",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "update": "node ./src/cli/index.js update",
     "version": "node ./src/cli/index.js version",
