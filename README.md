@@ -99,6 +99,61 @@ const cnh = await client.cnh_nacional_simples({
 const pessoa = await client.pessoas_nome({ cpf: '123.456.789-00' });
 ```
 
+### Métodos de Ajuda (Console / Browser)
+
+A SDK inclui métodos auxiliares que funcionam tanto no Node.js quanto no console do browser:
+
+```javascript
+var client = new ConsultadeveiculosSDK({ sandbox: true });
+
+// Exibe ajuda completa
+client.help();
+
+// Filtra endpoints por termo
+client.help('veiculos');  // Mostra endpoints de veículos
+client.help('cnh');       // Mostra endpoints de CNH
+
+// Lista todos os endpoints agrupados por namespace
+client.endpoints();
+
+// Informações do SDK
+client.info();
+// { runtimeVersion, specVersion, sandbox, endpointsCount, namespaces }
+
+// Busca endpoints por termo
+client.search('debitos');  // Busca "debitos" nos slugs e nomes
+```
+
+#### Exemplo de `client.help()`:
+
+```
+📦 ConsultadeveiculosSDK - Help
+════════════════════════════════════════════════════════════════
+
+   Runtime: v1.0.0
+   Spec: v2.10.2.82
+   Modo: 🧪 SANDBOX
+   Endpoints: 177
+   Namespaces: conta, assincrono, cadastros, orgaos, credito, veiculos, cnh, inmetro, reclameAqui
+
+────────────────────────────────────────────────────────────────
+📖 USO BÁSICO
+────────────────────────────────────────────────────────────────
+
+   var client = new ConsultadeveiculosSDK({ auth_token: "SEU_TOKEN" });
+   const result = await client.SLUG({ param: "valor" });
+
+────────────────────────────────────────────────────────────────
+🔧 MÉTODOS AUXILIARES
+────────────────────────────────────────────────────────────────
+
+   client.help()              Exibe esta ajuda
+   client.help("veiculos")    Filtra endpoints por termo
+   client.endpoints()         Lista todos os endpoints
+   client.info()              Informações do SDK
+   client.search("placa")     Busca endpoints
+```
+
 ### Métodos Internos (prefixados com `_`)
 
 ```javascript

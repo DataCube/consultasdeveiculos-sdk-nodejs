@@ -169,13 +169,14 @@ export async function doctor(args = []) {
 
     // 8. Testa conectividade (opcional)
     if (args.includes('--network') || args.includes('-n')) {
-        const specServerUrl = config.get('specServerUrl');
+        const downloadUrl = config.get('downloadUrl');
         try {
             const controller = new AbortController();
             const timeout = setTimeout(() => controller.abort(), 5000);
             
-            const response = await fetch(`${specServerUrl}/manifest.json`, {
-                signal: controller.signal
+            const response = await fetch(downloadUrl, {
+                signal: controller.signal,
+                method: 'HEAD'
             });
             
             clearTimeout(timeout);
@@ -184,7 +185,7 @@ export async function doctor(args = []) {
                 name: 'Conectividade',
                 status: response.ok ? 'ok' : 'warning',
                 message: response.ok 
-                    ? `Servidor acessível (${specServerUrl})` 
+                    ? `Servidor acessível (${downloadUrl})` 
                     : `Servidor retornou status ${response.status}`
             });
         } catch (error) {

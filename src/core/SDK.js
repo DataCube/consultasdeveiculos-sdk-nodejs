@@ -331,7 +331,8 @@ class ConsultadeveiculosSDKBase {
         const results = [];
         
         for (const [slug, endpoint] of this._slugMap) {
-            if (regex.test(slug) || regex.test(endpoint.name) || regex.test(endpoint.url)) {
+            // Busca apenas no slug e nome do endpoint
+            if (regex.test(slug) || regex.test(endpoint.name)) {
                 results.push({
                     slug,
                     key: endpoint.key,
@@ -340,6 +341,174 @@ class ConsultadeveiculosSDKBase {
                     url: endpoint.url
                 });
             }
+        }
+        
+        return results;
+    }
+
+    /**
+     * Exibe ajuda no console (funciona no browser e Node.js)
+     * @param {string} [filter] - Filtro opcional para buscar endpoints
+     */
+    help(filter) {
+        const info = this._info();
+        const namespaces = info.namespaces;
+        
+        console.log('');
+        console.log('📦 ConsultadeveiculosSDK - Help');
+        console.log('════════════════════════════════════════════════════════════════');
+        console.log('');
+        console.log(`   Runtime: v${info.runtimeVersion}`);
+        console.log(`   Spec: v${info.specVersion}`);
+        console.log(`   Modo: ${info.sandbox ? '🧪 SANDBOX' : '🔴 PRODUÇÃO'}`);
+        console.log(`   Endpoints: ${info.endpointsCount}`);
+        console.log(`   Namespaces: ${namespaces.join(', ')}`);
+        console.log('');
+        console.log('────────────────────────────────────────────────────────────────');
+        console.log('📖 USO BÁSICO');
+        console.log('────────────────────────────────────────────────────────────────');
+        console.log('');
+        console.log('   // Criar cliente');
+        console.log('   var client = new ConsultadeveiculosSDK({ auth_token: "SEU_TOKEN" });');
+        console.log('');
+        console.log('   // Chamar endpoint');
+        console.log('   const result = await client.SLUG({ param: "valor" });');
+        console.log('');
+        console.log('────────────────────────────────────────────────────────────────');
+        console.log('🔧 MÉTODOS AUXILIARES');
+        console.log('────────────────────────────────────────────────────────────────');
+        console.log('');
+        console.log('   client.help()              Exibe esta ajuda');
+        console.log('   client.help("veiculos")    Filtra endpoints por termo');
+        console.log('   client.endpoints()         Lista todos os endpoints');
+        console.log('   client.info()              Informações do SDK');
+        console.log('   client.search("placa")     Busca endpoints');
+        console.log('');
+        
+        // Se houver filtro, mostra endpoints filtrados
+        if (filter) {
+            console.log('────────────────────────────────────────────────────────────────');
+            console.log(`🔍 ENDPOINTS COM "${filter.toUpperCase()}"`);
+            console.log('────────────────────────────────────────────────────────────────');
+            console.log('');
+            
+            const filtered = this._searchEndpoints(filter);
+            
+            if (filtered.length === 0) {
+                console.log(`   Nenhum endpoint encontrado para "${filter}"`);
+            } else {
+                for (const ep of filtered.slice(0, 20)) {
+                    console.log(`   📌 client.${ep.slug}()`);
+                    console.log(`      ${ep.name}`);
+                    console.log('');
+                }
+                
+                if (filtered.length > 20) {
+                    console.log(`   ... e mais ${filtered.length - 20} endpoints`);
+                }
+            }
+        } else {
+            // Mostra alguns exemplos de cada namespace
+            console.log('────────────────────────────────────────────────────────────────');
+            console.log('📌 EXEMPLOS DE ENDPOINTS (por namespace)');
+            console.log('────────────────────────────────────────────────────────────────');
+            console.log('');
+            
+            for (const ns of namespaces.slice(0, 5)) {
+                const nsEndpoints = this._searchEndpoints(`^${ns}_`);
+                console.log(`   ${ns.toUpperCase()}:`);
+                
+                for (const ep of nsEndpoints.slice(0, 3)) {
+                    console.log(`     • client.${ep.slug}()`);
+                }
+                
+                if (nsEndpoints.length > 3) {
+                    console.log(`     ... +${nsEndpoints.length - 3} endpoints`);
+                }
+                console.log('');
+            }
+            
+            if (namespaces.length > 5) {
+                console.log(`   ... e mais ${namespaces.length - 5} namespaces`);
+                console.log('');
+            }
+        }
+        
+        console.log('════════════════════════════════════════════════════════════════');
+        console.log('');
+        
+        return this;  // Permite encadeamento
+    }
+
+    /**
+     * Alias para _listEndpoints (público)
+     */
+    endpoints() {
+        const list = this._listEndpoints();
+        
+        console.log('');
+        console.log(`📡 ${list.length} Endpoints Disponíveis`);
+        console.log('');
+        
+        // Agrupa por namespace
+        const grouped = {};
+        for (const ep of list) {
+            const ns = ep.slug.split('_')[0] || 'outros';
+            if (!grouped[ns]) grouped[ns] = [];
+            grouped[ns].push(ep);
+        }
+        
+        for (const [ns, eps] of Object.entries(grouped)) {
+            console.log(`   ${ns.toUpperCase()} (${eps.length}):`);
+            for (const ep of eps.slice(0, 5)) {
+                console.log(`     • ${ep.slug}`);
+            }
+            if (eps.length > 5) {
+                console.log(`     ... +${eps.length - 5} mais`);
+            }
+            console.log('');
+        }
+        
+        return list;
+    }
+
+    /**
+     * Alias para _info (público)
+     */
+    info() {
+        const data = this._info();
+        
+        console.log('');
+        console.log('ℹ️  SDK Info');
+        console.log('');
+        console.log(`   Runtime: v${data.runtimeVersion}`);
+        console.log(`   Spec: v${data.specVersion}`);
+        console.log(`   Modo: ${data.sandbox ? 'Sandbox' : 'Produção'}`);
+        console.log(`   Endpoints: ${data.endpointsCount}`);
+        console.log(`   Namespaces: ${data.namespaces.join(', ')}`);
+        console.log('');
+        
+        return data;
+    }
+
+    /**
+     * Alias para _searchEndpoints (público)
+     */
+    search(pattern) {
+        const results = this._searchEndpoints(pattern);
+        
+        console.log('');
+        console.log(`🔍 Busca: "${pattern}" (${results.length} resultados)`);
+        console.log('');
+        
+        for (const ep of results.slice(0, 10)) {
+            console.log(`   📌 client.${ep.slug}()`);
+            console.log(`      ${ep.name}`);
+            console.log('');
+        }
+        
+        if (results.length > 10) {
+            console.log(`   ... +${results.length - 10} resultados`);
         }
         
         return results;
@@ -372,6 +541,16 @@ function createSDKProxy(options) {
         get(target, prop, receiver) {
             // Propriedades internas começando com _ são acessadas diretamente
             if (typeof prop === 'string' && prop.startsWith('_')) {
+                const value = Reflect.get(target, prop, receiver);
+                if (typeof value === 'function') {
+                    return value.bind(target);
+                }
+                return value;
+            }
+            
+            // Métodos auxiliares públicos (help, endpoints, info, search)
+            const publicMethods = ['help', 'endpoints', 'info', 'search', 'options'];
+            if (publicMethods.includes(prop)) {
                 const value = Reflect.get(target, prop, receiver);
                 if (typeof value === 'function') {
                     return value.bind(target);

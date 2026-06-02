@@ -10,8 +10,8 @@ export class ConfigManager {
         // Diretório de cache local
         cacheDir: path.join(os.homedir(), '.empresa-sdk'),
         
-        // URL do servidor de especificações
-        specServerUrl: process.env.SDK_SPEC_SERVER_URL || 'https://api.consultasdeveiculos.com/sdk/spec',
+        // URL de download do postman.json
+        downloadUrl: process.env.DOWNLOAD_URL || 'https://painel.consultasdeveiculos.com/download-postman',
         
         // Timeout padrão para requisições (ms)
         timeout: 30000,

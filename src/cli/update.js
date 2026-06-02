@@ -1,15 +1,29 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { ConfigManager } from '../core/ConfigManager.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// URL de download (redirect GET que retorna postman.json)
+// Pode ser sobrescrita via variável de ambiente DOWNLOAD_URL
+const DOWNLOAD_URL = process.env.DOWNLOAD_URL || 'https://painel.consultasdeveiculos.com/download-postman';
+
+/**
+ * Extrai versão do campo info.name da collection
+ * Ex: "Consultas - V2.10.2.82" -> "2.10.2.82"
+ */
+function extractVersion(postman) {
+    const name = postman?.info?.name || '';
+    const match = name.match(/V([\d.]+)/i);
+    return match ? match[1] : 'unknown';
+}
+
 /**
  * Comando: update
  * 
- * Atualiza a especificação da API baixando do servidor
+ * Atualiza a especificação da API baixando do servidor.
+ * Sempre baixa e sobrescreve, independente da versão.
  */
 export async function update(args = []) {
     if (args.includes('--help') || args.includes('-h')) {
@@ -17,127 +31,130 @@ export async function update(args = []) {
         return;
     }
 
-    const config = new ConfigManager();
-    const specServerUrl = config.get('specServerUrl');
-    const force = args.includes('--force') || args.includes('-f');
+    const specDir = path.resolve(__dirname, '../../spec');
+    const postmanPath = path.join(specDir, 'postman.json');
 
     console.log('🔄 Atualizando especificação da API...');
     console.log('');
 
-    try {
-        // Verifica versão atual
-        let currentVersion = null;
-        const manifestPath = config.getCachedManifestPath();
-        
-        if (fs.existsSync(manifestPath)) {
-            const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'));
-            currentVersion = manifest.specVersion;
+    // Verifica versão atual (se existir)
+    let currentVersion = null;
+    if (fs.existsSync(postmanPath)) {
+        try {
+            const current = JSON.parse(fs.readFileSync(postmanPath, 'utf-8'));
+            currentVersion = extractVersion(current);
             console.log(`   Versão atual: ${currentVersion}`);
+        } catch (e) {
+            console.log('   Versão atual: corrompida');
+        }
+    } else {
+        console.log('   Versão atual: nenhuma');
+    }
+
+    try {
+        console.log('   Baixando do servidor...');
+        
+        const response = await fetch(DOWNLOAD_URL, {
+            redirect: 'follow',
+            headers: { 'Accept': 'application/json, */*' }
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status} ${response.statusText}`);
         }
 
-        // Baixa manifest do servidor
-        console.log('   Verificando atualizações...');
+        // Tenta parsear como JSON
+        const text = await response.text();
+        let postman;
         
-        const manifestUrl = `${specServerUrl}/manifest.json`;
-        const manifestResponse = await fetch(manifestUrl);
-        
-        if (!manifestResponse.ok) {
-            throw new Error(`Falha ao baixar manifest: ${manifestResponse.status}`);
+        try {
+            postman = JSON.parse(text);
+        } catch (e) {
+            throw new Error('Resposta não é JSON válido');
         }
 
-        const remoteManifest = await manifestResponse.json();
-        console.log(`   Versão disponível: ${remoteManifest.specVersion}`);
-
-        // Verifica se precisa atualizar
-        if (!force && currentVersion === remoteManifest.specVersion) {
-            console.log('');
-            console.log('✅ Especificação já está atualizada!');
-            return;
-        }
-
-        // Baixa postman.json
-        console.log('   Baixando especificação...');
-        
-        const postmanUrl = `${specServerUrl}/postman.json`;
-        const postmanResponse = await fetch(postmanUrl);
-        
-        if (!postmanResponse.ok) {
-            throw new Error(`Falha ao baixar postman.json: ${postmanResponse.status}`);
-        }
-
-        const postman = await postmanResponse.json();
-
-        // Valida integridade
-        console.log('   Validando integridade...');
+        // Valida estrutura
+        console.log('   Validando estrutura...');
         
         if (!postman.info || !postman.item) {
-            throw new Error('Arquivo postman.json inválido');
+            throw new Error('Estrutura Postman inválida (faltando info ou item)');
         }
 
-        // Salva no cache local
-        console.log('   Salvando no cache local...');
-        
-        const postmanPath = config.getCachedPostmanPath();
-        fs.writeFileSync(postmanPath, JSON.stringify(postman, null, 2), 'utf-8');
-        fs.writeFileSync(manifestPath, JSON.stringify(remoteManifest, null, 2), 'utf-8');
+        const newVersion = extractVersion(postman);
+        console.log(`   Nova versão: ${newVersion}`);
 
-        // Atualiza também no diretório spec/ do pacote
-        const specDir = path.resolve(__dirname, '../../spec');
-        const packagePostmanPath = path.join(specDir, 'postman.json');
-        const packageManifestPath = path.join(specDir, 'manifest.json');
-
+        // Garante que o diretório existe
         if (!fs.existsSync(specDir)) {
             fs.mkdirSync(specDir, { recursive: true });
         }
 
-        fs.writeFileSync(packagePostmanPath, JSON.stringify(postman, null, 2), 'utf-8');
-        fs.writeFileSync(packageManifestPath, JSON.stringify(remoteManifest, null, 2), 'utf-8');
+        // Salva no spec/
+        console.log('   Salvando...');
+        fs.writeFileSync(postmanPath, JSON.stringify(postman, null, 2), 'utf-8');
 
         console.log('');
         console.log('✅ Especificação atualizada com sucesso!');
         console.log('');
         console.log(`   Versão anterior: ${currentVersion || 'nenhuma'}`);
-        console.log(`   Nova versão: ${remoteManifest.specVersion}`);
-        console.log(`   Atualizado em: ${remoteManifest.generatedAt || new Date().toISOString()}`);
+        console.log(`   Versão atual: ${newVersion}`);
+        console.log(`   Endpoints: ${countEndpoints(postman)}`);
 
     } catch (error) {
-        if (error.cause?.code === 'ENOTFOUND' || error.message.includes('fetch')) {
-            console.error('');
-            console.error('❌ Não foi possível conectar ao servidor de especificações.');
-            console.error('   Verifique sua conexão com a internet e tente novamente.');
-            console.error('');
-            console.error(`   URL: ${specServerUrl}`);
-            
-            // Oferece opção de usar especificação local
-            const specDir = path.resolve(__dirname, '../../spec');
-            const packagePostmanPath = path.join(specDir, 'postman.json');
-            
-            if (fs.existsSync(packagePostmanPath)) {
-                console.error('');
-                console.error('   💡 Uma versão local está disponível no pacote.');
-                console.error('      A SDK funcionará com a versão embarcada.');
-            }
+        console.error('');
+        
+        if (error.cause?.code === 'ENOTFOUND' || error.message.includes('fetch failed')) {
+            console.error('❌ Não foi possível conectar ao servidor.');
+            console.error('   Verifique sua conexão com a internet.');
         } else {
-            throw error;
+            console.error(`❌ Erro: ${error.message}`);
+        }
+        
+        console.error('');
+        console.error(`   URL: ${DOWNLOAD_URL}`);
+        
+        if (fs.existsSync(postmanPath)) {
+            console.error('');
+            console.error('   💡 Usando versão local existente.');
+        }
+        
+        process.exit(1);
+    }
+}
+
+/**
+ * Conta endpoints na collection
+ */
+function countEndpoints(postman) {
+    let count = 0;
+    
+    function countItems(items) {
+        for (const item of items) {
+            if (item.item) {
+                countItems(item.item);
+            } else if (item.request) {
+                count++;
+            }
         }
     }
+    
+    countItems(postman.item || []);
+    return count;
 }
 
 function showHelp() {
     console.log(`
-📦 empresa-sdk update
+📦 datacube-sdk update
 
 Atualiza a especificação da API baixando a versão mais recente do servidor.
+Sempre baixa e sobrescreve a versão local.
 
 Uso:
-  npx empresa-sdk update [opções]
+  npx datacube-sdk update
 
 Opções:
-  -f, --force   Força atualização mesmo se a versão for a mesma
   -h, --help    Exibe esta ajuda
 
 Exemplos:
-  npx empresa-sdk update
-  npx empresa-sdk update --force
+  npx datacube-sdk update
 `);
 }
