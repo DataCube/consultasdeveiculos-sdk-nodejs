@@ -25,6 +25,35 @@ Quando a API adiciona novos endpoints, basta atualizar o arquivo Postman — a S
 
 ---
 
+## 🧩 Design Patterns — Por que usamos?
+
+**Design Patterns** são soluções prontas para problemas comuns em programação. Usar patterns deixa o código mais organizado, fácil de manter e de entender.
+
+### Patterns usados neste projeto:
+
+| Pattern | Onde usamos | Por quê? |
+|---------|-------------|----------|
+| **Proxy** | SDK.js | Intercepta chamadas de método e redireciona para o endpoint correto. Permite criar 177 métodos sem escrever nenhum. |
+| **Registry** | EndpointRegistry | Catálogo central de endpoints. Qualquer parte do código consulta o mesmo lugar. |
+| **Strategy** | Transport | Troca fácil entre HttpTransport (produção) e SandboxTransport (testes) sem mudar código. |
+| **Factory** | SDK.js | Cria o Transport correto baseado nas opções (`sandbox: true` ou `false`). |
+
+### Benefícios práticos:
+
+```
+SEM PATTERNS                          COM PATTERNS
+─────────────────────────────────────────────────────────────
+❌ Código espalhado                   ✅ Código organizado
+❌ Difícil de testar                  ✅ Fácil de testar (Strategy)
+❌ Muita repetição                    ✅ Zero repetição (Proxy)
+❌ Mudança quebra tudo                ✅ Mudança isolada
+❌ Novo dev demora entender           ✅ Estrutura familiar
+```
+
+**Em resumo:** Design Patterns são como "receitas de bolo" que todo desenvolvedor conhece. Quando usamos, qualquer pessoa consegue entender e manter o projeto mais facilmente.
+
+---
+
 ## 🏗️ Arquitetura (Como funciona por dentro)
 
 A SDK possui 4 camadas principais:
