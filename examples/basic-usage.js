@@ -21,10 +21,12 @@ async function main() {
         const veiculo = await client.veiculos_agregados({
             placa: 'LPH9883'
         });
+
+        console.log(veiculo);
         // Usa JSON.stringify para mostrar conteúdo completo dos arrays
         console.log('Response:', JSON.stringify(veiculo.data, null, 2));
         console.log('');
-
+//    client.endpoints();
         // ===================================
         // Consulta de CPF - Nome
         // ===================================

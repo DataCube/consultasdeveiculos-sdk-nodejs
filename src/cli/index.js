@@ -56,7 +56,7 @@ async function main() {
 
 function showHelp() {
     console.log(`
-📦 datacube-sdk CLI
+📦 consultasdeveiculos-sdk CLI
 
 Comandos disponíveis:
 
@@ -67,18 +67,18 @@ Comandos disponíveis:
   clear-cache   Limpa o cache local
 
 Uso:
-  npx datacube-sdk <comando>
+  npx consultasdeveiculos-sdk <comando>
 
 Exemplos:
-  npx datacube-sdk endpoints                 # Lista todos os endpoints
-  npx datacube-sdk endpoints veiculos        # Endpoints de veículos
-  npx datacube-sdk endpoints --verbose       # Com descrições
-  npx datacube-sdk update
-  npx datacube-sdk version
-  npx datacube-sdk doctor
+  npx consultasdeveiculos-sdk endpoints                 # Lista todos os endpoints
+  npx consultasdeveiculos-sdk endpoints veiculos        # Endpoints de veículos
+  npx consultasdeveiculos-sdk endpoints --verbose       # Com descrições
+  npx consultasdeveiculos-sdk update
+  npx consultasdeveiculos-sdk version
+  npx consultasdeveiculos-sdk doctor
 
 Para mais informações sobre um comando específico:
-  npx datacube-sdk <comando> --help
+  npx consultasdeveiculos-sdk <comando> --help
 `);
 }
 

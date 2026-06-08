@@ -248,7 +248,7 @@ O coração da SDK usa o **Proxy Pattern** do JavaScript. Funciona assim:
 
 ### 1️⃣ Modo Produção
 ```javascript
-import ConsultadeveiculosSDK from '@datacube/sdk';
+import ConsultadeveiculosSDK from '@consultasdeveiculos/sdk';
 import 'dotenv/config'; // Carrega variáveis do arquivo .env
 
 // Opção 1: Token direto (não recomendado em produção)
@@ -291,7 +291,7 @@ O modo Sandbox é perfeito para:
 | `src/parser/` | Interpretação da coleção Postman |
 | `src/transport/` | Camada de comunicação HTTP |
 | `src/errors/` | Tratamento de erros padronizado |
-| `src/cli/` | Comandos de terminal (datacube-sdk) |
+| `src/cli/` | Comandos de terminal (consultasdeveiculos-sdk) |
 | `spec/postman.json` | Coleção Postman (fonte da verdade) |
 | `examples/` | Exemplos de uso |
 | `tests/` | Testes automatizados |
@@ -338,7 +338,7 @@ client.info()           // Informações da SDK
 ## 📖 Como Usar (Exemplo Rápido)
 
 ```javascript
-import ConsultadeveiculosSDK from '@datacube/sdk';
+import ConsultadeveiculosSDK from '@consultasdeveiculos/sdk';
 
 // Inicializa a SDK
 var client = new ConsultadeveiculosSDK({
@@ -367,19 +367,19 @@ console.log(pessoa);
 
 ```bash
 # Verifica status da instalação
-npx datacube-sdk doctor
+npx consultasdeveiculos-sdk doctor
 
 # Lista endpoints disponíveis
-npx datacube-sdk endpoints
+npx consultasdeveiculos-sdk endpoints
 
 # Atualiza coleção Postman
-npx datacube-sdk update
+npx consultasdeveiculos-sdk update
 
 # Limpa cache
-npx datacube-sdk clear-cache
+npx consultasdeveiculos-sdk clear-cache
 
 # Mostra versão
-npx datacube-sdk version
+npx consultasdeveiculos-sdk version
 ```
 
 ---

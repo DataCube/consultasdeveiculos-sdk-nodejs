@@ -183,13 +183,13 @@ class ConsultadeveiculosSDKBase {
 
         if (!postmanPath) {
             throw new SpecificationError(
-                'Arquivo Postman não encontrado (padrão: Consultas - V*.postman_collection.json). Execute "npx datacube-sdk update" para baixar a especificação.'
+                'Arquivo Postman não encontrado (padrão: Consultas - V*.postman_collection.json). Execute "npx consultasdeveiculos-sdk update" para baixar a especificação.'
             );
         }
 
         if (!fs.existsSync(manifestPath)) {
             throw new SpecificationError(
-                'Arquivo manifest.json não encontrado. Execute "npx datacube-sdk update" para baixar a especificação.'
+                'Arquivo manifest.json não encontrado. Execute "npx consultasdeveiculos-sdk update" para baixar a especificação.'
             );
         }
 

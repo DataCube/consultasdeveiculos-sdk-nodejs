@@ -19,7 +19,7 @@ Esta SDK funciona como um **Runtime Engine** que consome endpoints definidos em 
 ## 📦 Instalação
 
 ```bash
-npm install @datacube/sdk
+npm install @consultasdeveiculos/sdk
 ```
 
 ## 🏁 Início Rápido
@@ -27,7 +27,7 @@ npm install @datacube/sdk
 ### Modo Produção
 
 ```javascript
-import ConsultadeveiculosSDK from '@datacube/sdk';
+import ConsultadeveiculosSDK from '@consultasdeveiculos/sdk';
 
 // Inicializa com token obrigatório
 var client = new ConsultadeveiculosSDK({
@@ -39,13 +39,13 @@ const resultado = await client.veiculos_agregados({
     placa: 'ABC1234'
 });
 
-console.log(resultado);
+console.log(resultado.data);
 ```
 
 ### Modo Sandbox
 
 ```javascript
-import ConsultadeveiculosSDK from '@datacube/sdk';
+import ConsultadeveiculosSDK from '@consultasdeveiculos/sdk';
 
 // Inicializa em modo sandbox (sem token necessário)
 var client = new ConsultadeveiculosSDK({
@@ -57,7 +57,7 @@ const resultado = await client.veiculos_agregados({
     placa: 'ABC1234'
 });
 
-console.log(resultado.sandbox); // true
+console.log(resultado.data); // true
 ```
 
 ## 📖 API
@@ -182,33 +182,33 @@ A SDK inclui um CLI completo para explorar os endpoints disponíveis.
 
 ```bash
 # Listar todos os endpoints
-npx datacube-sdk endpoints
+npx consultasdeveiculos-sdk endpoints
 
 # Filtrar por namespace
-npx datacube-sdk endpoints veiculos
-npx datacube-sdk endpoints cnh
-npx datacube-sdk endpoints credito
+npx consultasdeveiculos-sdk endpoints veiculos
+npx consultasdeveiculos-sdk endpoints cnh
+npx consultasdeveiculos-sdk endpoints credito
 
 # Com descrições e URLs detalhadas
-npx datacube-sdk endpoints --verbose
+npx consultasdeveiculos-sdk endpoints --verbose
 
 # Saída em formato JSON
-npx datacube-sdk endpoints --json
+npx consultasdeveiculos-sdk endpoints --json
 
 # Ver versão da SDK e especificação
-npx datacube-sdk version
+npx consultasdeveiculos-sdk version
 
 # Diagnóstico do ambiente
-npx datacube-sdk doctor
+npx consultasdeveiculos-sdk doctor
 
 # Atualizar especificação Postman
-npx datacube-sdk update
+npx consultasdeveiculos-sdk update
 
 # Limpar cache
-npx datacube-sdk clear-cache
+npx consultasdeveiculos-sdk clear-cache
 
 # Ajuda
-npx datacube-sdk --help
+npx consultasdeveiculos-sdk --help
 ```
 
 ### Exemplo de Saída do CLI
@@ -243,7 +243,7 @@ import ConsultadeveiculosSDK, {
     RateLimitError,
     EndpointNotFoundError,
     SDKError 
-} from '@datacube/sdk';
+} from '@consultasdeveiculos/sdk';
 
 try {
     await client.veiculos_agregados({ placa: 'ABC1234' });
@@ -385,7 +385,7 @@ Gerencia configurações e cache local da SDK.
 **Responsabilidades:**
 - Encontra arquivo Postman no diretório (por padrão `*.postman_collection.json`)
 - Extrai versão do nome do arquivo
-- Gerencia diretório de cache (`~/.datacube-sdk/`)
+- Gerencia diretório de cache (`~/.consultasdeveiculos-sdk/`)
 - Carrega/salva configurações
 
 ### `/src/parser/PostmanParser.js`

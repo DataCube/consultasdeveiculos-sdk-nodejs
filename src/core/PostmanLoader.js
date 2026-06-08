@@ -10,7 +10,7 @@ const __dirname = path.dirname(__filename);
  * Carregador de coleções Postman
  * 
  * Responsável por carregar a especificação Postman de diferentes fontes:
- * - Cache local (~/.empresa-sdk/)
+ * - Cache local (~/.consultasdeveiculos-sdk/)
  * - Diretório spec/ do pacote
  * - Servidor remoto
  */
@@ -79,13 +79,13 @@ export class PostmanLoader {
 
         if (!postmanPath) {
             throw new SpecificationError(
-                'Arquivo Postman não encontrado (padrão: Consultas - V*.postman_collection.json). Execute "npx empresa-sdk update" para baixar a especificação.'
+                'Arquivo Postman não encontrado (padrão: Consultas - V*.postman_collection.json). Execute "npx consultasdeveiculos-sdk update" para baixar a especificação.'
             );
         }
 
         if (!fs.existsSync(manifestPath)) {
             throw new SpecificationError(
-                'Arquivo manifest.json não encontrado. Execute "npx empresa-sdk update" para baixar a especificação.'
+                'Arquivo manifest.json não encontrado. Execute "npx consultasdeveiculos-sdk update" para baixar a especificação.'
             );
         }
 

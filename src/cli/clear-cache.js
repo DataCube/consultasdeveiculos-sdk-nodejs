@@ -30,7 +30,7 @@ export async function clearCache(args = []) {
         console.log('   Use --force para confirmar a limpeza.');
         console.log('');
         console.log('   💡 Após limpar o cache, execute:');
-        console.log('      npx empresa-sdk update');
+        console.log('      npx consultasdeveiculos-sdk update');
         console.log('');
         return;
     }
@@ -42,7 +42,7 @@ export async function clearCache(args = []) {
         console.log('✅ Cache limpo com sucesso!');
         console.log('');
         console.log('   💡 Para baixar a especificação novamente, execute:');
-        console.log('      npx empresa-sdk update');
+        console.log('      npx consultasdeveiculos-sdk update');
         console.log('');
 
     } catch (error) {
@@ -54,12 +54,12 @@ export async function clearCache(args = []) {
 
 function showHelp() {
     console.log(`
-🗑️  empresa-sdk clear-cache
+🗑️  consultasdeveiculos-sdk clear-cache
 
 Limpa o cache local da SDK, removendo arquivos baixados.
 
 Uso:
-  npx empresa-sdk clear-cache [opções]
+  npx consultasdeveiculos-sdk clear-cache [opções]
 
 Opções:
   -f, --force   Confirma a limpeza do cache
@@ -71,7 +71,7 @@ O que é removido:
   • cache/ - Cache de respostas
 
 Exemplos:
-  npx empresa-sdk clear-cache
-  npx empresa-sdk clear-cache --force
+  npx consultasdeveiculos-sdk clear-cache
+  npx consultasdeveiculos-sdk clear-cache --force
 `);
 }

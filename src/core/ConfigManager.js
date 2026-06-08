@@ -8,7 +8,7 @@ import os from 'os';
 export class ConfigManager {
     static DEFAULT_CONFIG = {
         // Diretório de cache local
-        cacheDir: path.join(os.homedir(), '.empresa-sdk'),
+        cacheDir: path.join(os.homedir(), '.consultasdeveiculos-sdk'),
         
         // URL de download do postman.json
         downloadUrl: process.env.DOWNLOAD_URL || 'https://painel.consultasdeveiculos.com/download-postman',

@@ -37,7 +37,7 @@ A SDK foi projetada como um **Runtime Engine** que consome endpoints de uma cole
 ```mermaid
 graph TB
     subgraph "Camada de Interface"
-        CLI[CLI datacube-sdk]
+        CLI[CLI consultasdeveiculos-sdk]
         APP[Aplicação do Cliente]
     end
 

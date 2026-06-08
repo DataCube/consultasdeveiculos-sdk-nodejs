@@ -95,7 +95,7 @@ export async function endpoints(args = []) {
         console.log('💡 Dicas:');
         console.log('   • Use --verbose para ver descrições e URLs');
         console.log('   • Use --json para saída em JSON');
-        console.log('   • Filtre por namespace: datacube-sdk endpoints veiculos');
+        console.log('   • Filtre por namespace: consultasdeveiculos-sdk endpoints veiculos');
         console.log('');
 
     } catch (error) {
@@ -106,12 +106,12 @@ export async function endpoints(args = []) {
 
 function showHelp() {
     console.log(`
-📡 datacube-sdk endpoints
+📡 consultasdeveiculos-sdk endpoints
 
 Lista todos os endpoints disponíveis gerados a partir da coleção Postman.
 
 Uso:
-  npx datacube-sdk endpoints [namespace] [opções]
+  npx consultasdeveiculos-sdk endpoints [namespace] [opções]
 
 Argumentos:
   namespace     Filtra endpoints por namespace (ex: veiculos, cadastros, cnh)
@@ -122,9 +122,9 @@ Opções:
   -h, --help      Exibe esta ajuda
 
 Exemplos:
-  npx datacube-sdk endpoints                    # Lista todos
-  npx datacube-sdk endpoints veiculos           # Apenas veículos
-  npx datacube-sdk endpoints cnh --verbose      # CNH com detalhes
-  npx datacube-sdk endpoints --json             # Saída JSON
+  npx consultasdeveiculos-sdk endpoints                    # Lista todos
+  npx consultasdeveiculos-sdk endpoints veiculos           # Apenas veículos
+  npx consultasdeveiculos-sdk endpoints cnh --verbose      # CNH com detalhes
+  npx consultasdeveiculos-sdk endpoints --json             # Saída JSON
 `);
 }

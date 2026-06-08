@@ -23,7 +23,7 @@ export async function doctor(args = []) {
     const checks = [];
 
     console.log('');
-    console.log('🩺 Diagnóstico empresa-sdk');
+    console.log('🩺 Diagnóstico consultasdeveiculos-sdk');
     console.log('');
 
     // 1. Verifica versão do Node.js
@@ -84,7 +84,7 @@ export async function doctor(args = []) {
         status: postmanExists ? 'ok' : 'error',
         message: postmanExists 
             ? `${postmanFilename} (fonte: ${postmanSource})` 
-            : 'Não encontrado (padrão: Consultas - V*.postman_collection.json). Execute: npx empresa-sdk update'
+            : 'Não encontrado (padrão: Consultas - V*.postman_collection.json). Execute: npx consultasdeveiculos-sdk update'
     });
 
     // 4. Verifica se manifest.json existe
@@ -110,7 +110,7 @@ export async function doctor(args = []) {
         status: manifestExists ? 'ok' : 'error',
         message: manifestExists 
             ? `Encontrado (fonte: ${manifestSource})` 
-            : 'Não encontrado. Execute: npx empresa-sdk update'
+            : 'Não encontrado. Execute: npx consultasdeveiculos-sdk update'
     });
 
     // 5. Valida compatibilidade de versões
@@ -242,12 +242,12 @@ function isVersionCompatible(current, minimum) {
 
 function showHelp() {
     console.log(`
-🩺 empresa-sdk doctor
+🩺 consultasdeveiculos-sdk doctor
 
 Executa diagnóstico completo do ambiente da SDK.
 
 Uso:
-  npx empresa-sdk doctor [opções]
+  npx consultasdeveiculos-sdk doctor [opções]
 
 Opções:
   -v, --verbose   Exibe informações detalhadas
@@ -264,8 +264,8 @@ Verificações realizadas:
   • Contagem de endpoints
 
 Exemplos:
-  npx empresa-sdk doctor
-  npx empresa-sdk doctor --verbose
-  npx empresa-sdk doctor --network
+  npx consultasdeveiculos-sdk doctor
+  npx consultasdeveiculos-sdk doctor --verbose
+  npx consultasdeveiculos-sdk doctor --network
 `);
 }

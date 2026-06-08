@@ -1,11 +1,11 @@
 {
-  "name": "@datacube/sdk",
+  "name": "@consultasdeveiculos/sdk",
   "version": "1.0.0",
   "description": "SDK Node.js dinâmica baseada em coleções Postman",
   "main": "src/index.js",
   "type": "module",
   "bin": {
-    "datacube-sdk": "./src/cli/index.js"
+    "consultasdeveiculos-sdk": "./src/cli/index.js"
   },
   "scripts": {
     "postinstall": "node ./scripts/postinstall.js",

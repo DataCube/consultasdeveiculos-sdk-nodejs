@@ -1,5 +1,5 @@
 /**
- * @datacube/sdk - SDK Node.js Dinâmica Baseada em Postman
+ * @consultasdeveiculos/sdk - SDK Node.js Dinâmica Baseada em Postman
  * 
  * Runtime Engine que consome endpoints definidos em coleções Postman
  * sem necessidade de implementação manual de cada endpoint.

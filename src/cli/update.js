@@ -143,18 +143,18 @@ function countEndpoints(postman) {
 
 function showHelp() {
     console.log(`
-📦 datacube-sdk update
+📦 consultasdeveiculos-sdk update
 
 Atualiza a especificação da API baixando a versão mais recente do servidor.
 Sempre baixa e sobrescreve a versão local.
 
 Uso:
-  npx datacube-sdk update
+  npx consultasdeveiculos-sdk update
 
 Opções:
   -h, --help    Exibe esta ajuda
 
 Exemplos:
-  npx datacube-sdk update
+  npx consultasdeveiculos-sdk update
 `);
 }
