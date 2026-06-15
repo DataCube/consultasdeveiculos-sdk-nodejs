@@ -162,12 +162,11 @@ class ConsultadeveiculosSDKBase {
     _loadSpecSync() {
         // Tenta carregar do cache local primeiro
         const cachedPostmanPath = this.configManager.getCachedPostmanPath();
-        const cachedManifestPath = this.configManager.getCachedManifestPath();
 
-        if (fs.existsSync(cachedPostmanPath) && fs.existsSync(cachedManifestPath)) {
+        if (fs.existsSync(cachedPostmanPath)) {
             try {
                 const postman = JSON.parse(fs.readFileSync(cachedPostmanPath, 'utf-8'));
-                const manifest = JSON.parse(fs.readFileSync(cachedManifestPath, 'utf-8'));
+                const manifest = this._loadOrCreateManifest(this.configManager.getCachedManifestPath(), postman);
                 return { postman, manifest, source: 'cache' };
             } catch (error) {
                 console.warn('Cache local inválido, carregando do pacote...');
@@ -177,32 +176,55 @@ class ConsultadeveiculosSDKBase {
         // Carrega do diretório spec/ do pacote
         const specDir = path.resolve(__dirname, '../../spec');
         
-        // Busca arquivo Postman pelo padrão "Consultas - V*.postman_collection.json"
+        // Busca arquivo Postman
         const postmanPath = this.configManager.findPostmanFile(specDir);
         const manifestPath = path.join(specDir, 'manifest.json');
 
         if (!postmanPath) {
             throw new SpecificationError(
-                'Arquivo Postman não encontrado (padrão: Consultas - V*.postman_collection.json). Execute "npx consultasdeveiculos-sdk update" para baixar a especificação.'
-            );
-        }
-
-        if (!fs.existsSync(manifestPath)) {
-            throw new SpecificationError(
-                'Arquivo manifest.json não encontrado. Execute "npx consultasdeveiculos-sdk update" para baixar a especificação.'
+                'Arquivo Postman não encontrado. Execute "npx consultasdeveiculos-sdk update" para baixar a especificação.'
             );
         }
 
         const postman = JSON.parse(fs.readFileSync(postmanPath, 'utf-8'));
-        const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'));
-
-        // Extrai versão do nome do arquivo se não estiver no manifest
-        if (!manifest.specVersion) {
-            const filename = path.basename(postmanPath);
-            manifest.specVersion = this.configManager.extractVersionFromFilename(filename) || '1.0.0';
-        }
+        const manifest = this._loadOrCreateManifest(manifestPath, postman, postmanPath);
 
         return { postman, manifest, source: 'package' };
+    }
+
+    /**
+     * Carrega manifest.json ou cria um padrão
+     */
+    _loadOrCreateManifest(manifestPath, postman, postmanPath = null) {
+        if (fs.existsSync(manifestPath)) {
+            try {
+                const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'));
+                if (!manifest.specVersion && postmanPath) {
+                    const filename = path.basename(postmanPath);
+                    manifest.specVersion = this.configManager.extractVersionFromFilename(filename) || '1.0.0';
+                }
+                return manifest;
+            } catch {
+                // Se falhar, cria um padrão
+            }
+        }
+
+        // Cria manifest padrão baseado no postman
+        let specVersion = '1.0.0';
+        if (postmanPath) {
+            const filename = path.basename(postmanPath);
+            specVersion = this.configManager.extractVersionFromFilename(filename) || '1.0.0';
+        }
+        // Tenta extrair versão do info do postman
+        if (postman?.info?.version) {
+            specVersion = postman.info.version;
+        }
+
+        return {
+            specVersion,
+            minRuntimeVersion: '1.0.0',
+            generatedAt: new Date().toISOString()
+        };
     }
 
     /**
@@ -301,13 +323,20 @@ class ConsultadeveiculosSDKBase {
         const endpoints = [];
         
         for (const [slug, endpoint] of this._slugMap) {
+            // Extrai parâmetros do body
+            let params = [];
+            if (endpoint.body && typeof endpoint.body === 'object') {
+                params = Object.keys(endpoint.body);
+            }
+            
             endpoints.push({
                 slug,
                 key: endpoint.key,
                 name: endpoint.name,
                 method: endpoint.method,
                 url: endpoint.url,
-                description: endpoint.description
+                description: endpoint.description,
+                params
             });
         }
         
@@ -333,12 +362,19 @@ class ConsultadeveiculosSDKBase {
         for (const [slug, endpoint] of this._slugMap) {
             // Busca apenas no slug e nome do endpoint
             if (regex.test(slug) || regex.test(endpoint.name)) {
+                // Extrai parâmetros do body
+                let params = [];
+                if (endpoint.body && typeof endpoint.body === 'object') {
+                    params = Object.keys(endpoint.body);
+                }
+                
                 results.push({
                     slug,
                     key: endpoint.key,
                     name: endpoint.name,
                     method: endpoint.method,
-                    url: endpoint.url
+                    url: endpoint.url,
+                    params
                 });
             }
         }
@@ -397,39 +433,44 @@ class ConsultadeveiculosSDKBase {
             if (filtered.length === 0) {
                 console.log(`   Nenhum endpoint encontrado para "${filter}"`);
             } else {
-                for (const ep of filtered.slice(0, 20)) {
-                    console.log(`   📌 client.${ep.slug}()`);
+                for (const ep of filtered) {
+                    const paramsStr = ep.params && ep.params.length > 0 
+                        ? `{ ${ep.params.join(', ')} }` 
+                        : '';
+                    console.log(`   📌 client.${ep.slug}(${paramsStr})`);
                     console.log(`      ${ep.name}`);
                     console.log('');
                 }
-                
-                if (filtered.length > 20) {
-                    console.log(`   ... e mais ${filtered.length - 20} endpoints`);
-                }
             }
         } else {
-            // Mostra alguns exemplos de cada namespace
+            // Mostra todos os endpoints por namespace
             console.log('────────────────────────────────────────────────────────────────');
-            console.log('📌 EXEMPLOS DE ENDPOINTS (por namespace)');
+            console.log('📌 ENDPOINTS (por namespace)');
             console.log('────────────────────────────────────────────────────────────────');
             console.log('');
             
-            for (const ns of namespaces.slice(0, 5)) {
-                const nsEndpoints = this._searchEndpoints(`^${ns}_`);
-                console.log(`   ${ns.toUpperCase()}:`);
-                
-                for (const ep of nsEndpoints.slice(0, 3)) {
-                    console.log(`     • client.${ep.slug}()`);
-                }
-                
-                if (nsEndpoints.length > 3) {
-                    console.log(`     ... +${nsEndpoints.length - 3} endpoints`);
-                }
-                console.log('');
+            const allEndpoints = this._listEndpoints();
+            
+            // Agrupa por namespace
+            const grouped = {};
+            for (const ep of allEndpoints) {
+                const ns = ep.slug.split('_')[0] || 'outros';
+                if (!grouped[ns]) grouped[ns] = [];
+                grouped[ns].push(ep);
             }
             
-            if (namespaces.length > 5) {
-                console.log(`   ... e mais ${namespaces.length - 5} namespaces`);
+            for (const ns of namespaces) {
+                const nsEndpoints = grouped[ns] || [];
+                if (nsEndpoints.length === 0) continue;
+                
+                console.log(`   ${ns.toUpperCase()}:`);
+                
+                for (const ep of nsEndpoints) {
+                    const paramsStr = ep.params && ep.params.length > 0 
+                        ? `{ ${ep.params.join(', ')} }` 
+                        : '';
+                    console.log(`     • client.${ep.slug}(${paramsStr})`);
+                }
                 console.log('');
             }
         }
@@ -460,11 +501,11 @@ class ConsultadeveiculosSDKBase {
         
         for (const [ns, eps] of Object.entries(grouped)) {
             console.log(`   ${ns.toUpperCase()} (${eps.length}):`);
-            for (const ep of eps.slice(0, 5)) {
-                console.log(`     • ${ep.slug}`);
-            }
-            if (eps.length > 5) {
-                console.log(`     ... +${eps.length - 5} mais`);
+            for (const ep of eps) {
+                const paramsStr = ep.params && ep.params.length > 0 
+                    ? `{ ${ep.params.join(', ')} }` 
+                    : '';
+                console.log(`     • ${ep.slug}(${paramsStr})`);
             }
             console.log('');
         }
@@ -501,14 +542,13 @@ class ConsultadeveiculosSDKBase {
         console.log(`🔍 Busca: "${pattern}" (${results.length} resultados)`);
         console.log('');
         
-        for (const ep of results.slice(0, 10)) {
-            console.log(`   📌 client.${ep.slug}()`);
+        for (const ep of results) {
+            const paramsStr = ep.params && ep.params.length > 0 
+                ? `{ ${ep.params.join(', ')} }` 
+                : '';
+            console.log(`   📌 client.${ep.slug}(${paramsStr})`);
             console.log(`      ${ep.name}`);
             console.log('');
-        }
-        
-        if (results.length > 10) {
-            console.log(`   ... +${results.length - 10} resultados`);
         }
         
         return results;

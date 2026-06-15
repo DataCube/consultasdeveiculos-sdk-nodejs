@@ -74,7 +74,7 @@ export class ConfigManager {
 
     /**
      * Encontra arquivo Postman pelo padrão de nome
-     * Padrão: "Consultas - V*.postman_collection.json"
+     * Padrão: "Consultas - V*.postman_collection.json" ou "postman.json"
      */
     findPostmanFile(dir) {
         if (!fs.existsSync(dir)) {
@@ -82,11 +82,22 @@ export class ConfigManager {
         }
 
         const files = fs.readdirSync(dir);
-        const postmanFile = files.find(f => 
+        
+        // Primeiro tenta o padrão versionado
+        const versionedFile = files.find(f => 
             f.match(/^Consultas\s*-\s*V[\d.]+\.postman_collection\.json$/i)
         );
 
-        return postmanFile ? path.join(dir, postmanFile) : null;
+        if (versionedFile) {
+            return path.join(dir, versionedFile);
+        }
+        
+        // Fallback para postman.json
+        if (files.includes('postman.json')) {
+            return path.join(dir, 'postman.json');
+        }
+
+        return null;
     }
 
     /**

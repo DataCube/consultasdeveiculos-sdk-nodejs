@@ -66,7 +66,10 @@ export async function endpoints(args = []) {
             console.log('');
 
             for (const ep of eps) {
-                console.log(`   📌 client.${ep.slug}()`);
+                const paramsStr = ep.params && ep.params.length > 0 
+                    ? `{ ${ep.params.join(', ')} }` 
+                    : '';
+                console.log(`   📌 client.${ep.slug}(${paramsStr})`);
                 console.log(`      Nome: ${ep.name}`);
                 
                 if (verbose && ep.description) {
@@ -89,7 +92,10 @@ export async function endpoints(args = []) {
         console.log('   var client = new ConsultadeveiculosSDK({ auth_token: "TOKEN" });');
         if (allEndpoints.length > 0) {
             const example = allEndpoints[0];
-            console.log(`   const result = await client.${example.slug}({ /* params */ });`);
+            const paramsStr = example.params && example.params.length > 0 
+                ? `{ ${example.params.join(', ')} }` 
+                : '{}';
+            console.log(`   const result = await client.${example.slug}(${paramsStr});`);
         }
         console.log('');
         console.log('💡 Dicas:');
