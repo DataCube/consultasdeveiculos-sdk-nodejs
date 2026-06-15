@@ -1,7 +1,7 @@
 {
   "name": "@consultasdeveiculos/sdk",
   "version": "1.0.0",
-  "description": "SDK Node.js dinâmica baseada em coleções Postman",
+  "description": "SDK Node.js do https://consultasdeveiculos.com",
   "main": "src/index.js",
   "type": "module",
   "bin": {
@@ -17,12 +17,14 @@
   },
   "keywords": [
     "sdk",
-    "postman",
+    "consultasdeveiculos",
     "api",
     "dynamic",
+    "veiculos",
+    "debitos",
     "runtime"
   ],
-  "author": "",
+  "author": "DATACUBE SERVICO DE INFORMACAO VIA WEB LTDA",
   "license": "MIT",
   "engines": {
     "node": ">=18.0.0"
