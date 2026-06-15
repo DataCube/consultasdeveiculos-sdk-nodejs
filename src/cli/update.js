@@ -143,18 +143,18 @@ function countEndpoints(postman) {
 
 function showHelp() {
     console.log(`
-📦 consultasdeveiculos-sdk update
+📦 consultas-de-veiculos-sdk update
 
 Atualiza a especificação da API baixando a versão mais recente do servidor.
 Sempre baixa e sobrescreve a versão local.
 
 Uso:
-  npx consultasdeveiculos-sdk update
+  npx consultas-de-veiculos-sdk update
 
 Opções:
   -h, --help    Exibe esta ajuda
 
 Exemplos:
-  npx consultasdeveiculos-sdk update
+  npx consultas-de-veiculos-sdk update
 `);
 }

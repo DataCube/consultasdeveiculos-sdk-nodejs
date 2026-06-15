@@ -182,7 +182,7 @@ class ConsultadeveiculosSDKBase {
 
         if (!postmanPath) {
             throw new SpecificationError(
-                'Arquivo Postman não encontrado. Execute "npx consultasdeveiculos-sdk update" para baixar a especificação.'
+                'Arquivo Postman não encontrado. Execute "npx consultas-de-veiculos-sdk update" para baixar a especificação.'
             );
         }
 

@@ -1,15 +1,15 @@
 {
-  "name": "consultasdeveiculos-sdk",
+  "name": "@consultas-de-veiculos/sdk",
   "version": "1.0.0",
   "description": "SDK Node.js do https://consultasdeveiculos.com",
   "main": "src/index.js",
   "type": "module",
-  "homepage": "https://github.com/DataCube/consultasdeveiculos-sdk-nodejs#readme",
+  "homepage": "https://github.com/DataCube/consultas-de-veiculos-sdk-nodejs#readme",
   "publishConfig": {
     "access": "public"
   },
   "bin": {
-    "consultasdeveiculos-sdk": "./src/cli/index.js"
+    "consultas-de-veiculos-sdk": "src/cli/index.js"
   },
   "scripts": {
     "postinstall": "node ./scripts/postinstall.js",
@@ -30,7 +30,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/DataCube/consultasdeveiculos-sdk-nodejs"
+    "url": "git+https://github.com/DataCube/consultas-de-veiculos-sdk-nodejs.git"
   },
   "author": "DATACUBE SERVICO DE INFORMACAO VIA WEB LTDA",
   "license": "MIT",

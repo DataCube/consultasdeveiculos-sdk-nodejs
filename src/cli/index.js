@@ -56,7 +56,7 @@ async function main() {
 
 function showHelp() {
     console.log(`
-📦 consultasdeveiculos-sdk CLI
+📦 consultas-de-veiculos-sdk CLI
 
 Comandos disponíveis:
 
@@ -67,18 +67,18 @@ Comandos disponíveis:
   clear-cache   Limpa o cache local
 
 Uso:
-  npx consultasdeveiculos-sdk <comando>
+  npx consultas-de-veiculos-sdk <comando>
 
 Exemplos:
-  npx consultasdeveiculos-sdk endpoints                 # Lista todos os endpoints
-  npx consultasdeveiculos-sdk endpoints veiculos        # Endpoints de veículos
-  npx consultasdeveiculos-sdk endpoints --verbose       # Com descrições
-  npx consultasdeveiculos-sdk update
-  npx consultasdeveiculos-sdk version
-  npx consultasdeveiculos-sdk doctor
+  npx consultas-de-veiculos-sdk endpoints                 # Lista todos os endpoints
+  npx consultas-de-veiculos-sdk endpoints veiculos        # Endpoints de veículos
+  npx consultas-de-veiculos-sdk endpoints --verbose       # Com descrições
+  npx consultas-de-veiculos-sdk update
+  npx consultas-de-veiculos-sdk version
+  npx consultas-de-veiculos-sdk doctor
 
 Para mais informações sobre um comando específico:
-  npx consultasdeveiculos-sdk <comando> --help
+  npx consultas-de-veiculos-sdk <comando> --help
 `);
 }
 

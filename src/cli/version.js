@@ -68,7 +68,7 @@ export async function version(args = []) {
         }
 
         console.log('');
-        console.log('📦 consultasdeveiculos-sdk');
+        console.log('📦 consultas-de-veiculos-sdk');
         console.log('');
         console.log(`   Runtime:       ${runtimeVersion}`);
         console.log(`   Specification: ${specVersion}`);
@@ -98,12 +98,12 @@ export async function version(args = []) {
 
 function showHelp() {
     console.log(`
-📦 consultasdeveiculos-sdk version
+📦 consultas-de-veiculos-sdk version
 
 Exibe as versões do Runtime e da Specification.
 
 Uso:
-  npx consultasdeveiculos-sdk version [opções]
+  npx consultas-de-veiculos-sdk version [opções]
 
 Opções:
   -v, --verbose   Exibe informações detalhadas
@@ -111,8 +111,8 @@ Opções:
   -h, --help      Exibe esta ajuda
 
 Exemplos:
-  npx consultasdeveiculos-sdk version
-  npx consultasdeveiculos-sdk version --verbose
-  npx consultasdeveiculos-sdk version --json
+  npx consultas-de-veiculos-sdk version
+  npx consultas-de-veiculos-sdk version --verbose
+  npx consultas-de-veiculos-sdk version --json
 `);
 }

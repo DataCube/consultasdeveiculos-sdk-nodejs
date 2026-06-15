@@ -19,7 +19,7 @@ Esta SDK funciona como um **Runtime Engine** que consome endpoints definidos em 
 ## 📦 Instalação
 
 ```bash
-npm install consultasdeveiculos-sdk
+npm install @consultas-de-veiculos/sdk
 ```
 
 ## 🏁 Início Rápido
@@ -27,7 +27,7 @@ npm install consultasdeveiculos-sdk
 ### Modo Produção
 
 ```javascript
-import ConsultadeveiculosSDK from 'consultasdeveiculos-sdk';
+import ConsultadeveiculosSDK from '@consultas-de-veiculos/sdk';
 
 // Inicializa com token obrigatório
 var client = new ConsultadeveiculosSDK({
@@ -45,7 +45,7 @@ console.log(resultado.data);
 ### Modo Sandbox
 
 ```javascript
-import ConsultadeveiculosSDK from 'consultasdeveiculos-sdk';
+import ConsultadeveiculosSDK from '@consultas-de-veiculos/sdk';
 
 // Inicializa em modo sandbox (sem token necessário)
 var client = new ConsultadeveiculosSDK({
@@ -182,33 +182,33 @@ A SDK inclui um CLI completo para explorar os endpoints disponíveis.
 
 ```bash
 # Listar todos os endpoints
-npx consultasdeveiculos-sdk endpoints
+npx consultas-de-veiculos-sdk endpoints
 
 # Filtrar por namespace
-npx consultasdeveiculos-sdk endpoints veiculos
-npx consultasdeveiculos-sdk endpoints cnh
-npx consultasdeveiculos-sdk endpoints credito
+npx consultas-de-veiculos-sdk endpoints veiculos
+npx consultas-de-veiculos-sdk endpoints cnh
+npx consultas-de-veiculos-sdk endpoints credito
 
 # Com descrições e URLs detalhadas
-npx consultasdeveiculos-sdk endpoints --verbose
+npx consultas-de-veiculos-sdk endpoints --verbose
 
 # Saída em formato JSON
-npx consultasdeveiculos-sdk endpoints --json
+npx consultas-de-veiculos-sdk endpoints --json
 
 # Ver versão da SDK e especificação
-npx consultasdeveiculos-sdk version
+npx consultas-de-veiculos-sdk version
 
 # Diagnóstico do ambiente
-npx consultasdeveiculos-sdk doctor
+npx consultas-de-veiculos-sdk doctor
 
 # Atualizar especificação Postman
-npx consultasdeveiculos-sdk update
+npx consultas-de-veiculos-sdk update
 
 # Limpar cache
-npx consultasdeveiculos-sdk clear-cache
+npx consultas-de-veiculos-sdk clear-cache
 
 # Ajuda
-npx consultasdeveiculos-sdk --help
+npx consultas-de-veiculos-sdk --help
 ```
 
 ### Exemplo de Saída do CLI
@@ -243,7 +243,7 @@ import ConsultadeveiculosSDK, {
     RateLimitError,
     EndpointNotFoundError,
     SDKError 
-} from 'consultasdeveiculos-sdk';
+} from '@consultas-de-veiculos/sdk';
 
 try {
     await client.veiculos_agregados({ placa: 'ABC1234' });
@@ -292,7 +292,7 @@ SDKError (classe base)
 ## 📁 Estrutura do Projeto
 
 ```
-consultasdeveiculos-sdk-nodejs/
+consultas-de-veiculos-sdk-nodejs/
 │
 ├── 📄 package.json              # Configuração do pacote npm
 ├── 📄 README.md                 # Esta documentação
@@ -385,7 +385,7 @@ Gerencia configurações e cache local da SDK.
 **Responsabilidades:**
 - Encontra arquivo Postman no diretório (por padrão `*.postman_collection.json`)
 - Extrai versão do nome do arquivo
-- Gerencia diretório de cache (`~/.consultasdeveiculos-sdk/`)
+- Gerencia diretório de cache (`~/.consultas-de-veiculos-sdk/`)
 - Carrega/salva configurações
 
 ### `/src/parser/PostmanParser.js`

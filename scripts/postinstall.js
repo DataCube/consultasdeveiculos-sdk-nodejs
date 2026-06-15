@@ -33,7 +33,7 @@ function extractVersion(postman) {
  * Baixa a collection do servidor
  */
 async function downloadSpec() {
-    console.log('📦 consultasdeveiculos-sdk postinstall');
+    console.log('📦 @consultas-de-veiculos/sdk postinstall');
     console.log('');
     
     // Verifica se já existe
@@ -42,7 +42,7 @@ async function downloadSpec() {
             const postman = JSON.parse(fs.readFileSync(POSTMAN_FILE, 'utf-8'));
             const version = extractVersion(postman);
             console.log(`   ✅ spec/postman.json já existe (v${version})`);
-            console.log('   💡 Use "npx consultasdeveiculos-sdk update" para atualizar');
+            console.log('   💡 Use "npx consultas-de-veiculos-sdk update" para atualizar');
             console.log('');
             return;
         } catch (e) {
