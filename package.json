@@ -1,5 +1,5 @@
 {
-  "name": "@consultasdeveiculos/sdk",
+  "name": "consultasdeveiculos-sdk",
   "version": "1.0.0",
   "description": "SDK Node.js do https://consultasdeveiculos.com",
   "main": "src/index.js",

@@ -19,7 +19,7 @@ Esta SDK funciona como um **Runtime Engine** que consome endpoints definidos em 
 ## 📦 Instalação
 
 ```bash
-npm install @consultasdeveiculos/sdk
+npm install consultasdeveiculos-sdk
 ```
 
 ## 🏁 Início Rápido
@@ -27,7 +27,7 @@ npm install @consultasdeveiculos/sdk
 ### Modo Produção
 
 ```javascript
-import ConsultadeveiculosSDK from '@consultasdeveiculos/sdk';
+import ConsultadeveiculosSDK from 'consultasdeveiculos-sdk';
 
 // Inicializa com token obrigatório
 var client = new ConsultadeveiculosSDK({
@@ -45,7 +45,7 @@ console.log(resultado.data);
 ### Modo Sandbox
 
 ```javascript
-import ConsultadeveiculosSDK from '@consultasdeveiculos/sdk';
+import ConsultadeveiculosSDK from 'consultasdeveiculos-sdk';
 
 // Inicializa em modo sandbox (sem token necessário)
 var client = new ConsultadeveiculosSDK({
@@ -243,7 +243,7 @@ import ConsultadeveiculosSDK, {
     RateLimitError,
     EndpointNotFoundError,
     SDKError 
-} from '@consultasdeveiculos/sdk';
+} from 'consultasdeveiculos-sdk';
 
 try {
     await client.veiculos_agregados({ placa: 'ABC1234' });

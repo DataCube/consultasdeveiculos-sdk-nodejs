@@ -33,7 +33,7 @@ function extractVersion(postman) {
  * Baixa a collection do servidor
  */
 async function downloadSpec() {
-    console.log('📦 @consultasdeveiculos/sdk postinstall');
+    console.log('📦 consultasdeveiculos-sdk postinstall');
     console.log('');
     
     // Verifica se já existe
