@@ -4,6 +4,10 @@
   "description": "SDK Node.js do https://consultasdeveiculos.com",
   "main": "src/index.js",
   "type": "module",
+  "homepage": "https://github.com/DataCube/consultasdeveiculos-sdk-nodejs#readme",
+  "publishConfig": {
+    "access": "public"
+  },
   "bin": {
     "consultasdeveiculos-sdk": "./src/cli/index.js"
   },
@@ -24,6 +28,10 @@
     "debitos",
     "runtime"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DataCube/consultasdeveiculos-sdk-nodejs"
+  },
   "author": "DATACUBE SERVICO DE INFORMACAO VIA WEB LTDA",
   "license": "MIT",
   "engines": {
