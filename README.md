@@ -13,7 +13,6 @@ Esta SDK funciona como um **Runtime Engine** que consome endpoints definidos em 
 - ✅ **100% Proxy-based**: Zero funções hardcoded - tudo vem do Postman
 - ✅ **Slug-based API**: Chamadas simples via `client.veiculos_agregados()`
 - ✅ **Modo Sandbox**: Teste sem conexão com a API real
-- ✅ **177 endpoints**: Gerados automaticamente da coleção Postman
 - ✅ **CLI Completo**: Liste endpoints disponíveis
 
 ## 📦 Instalação
