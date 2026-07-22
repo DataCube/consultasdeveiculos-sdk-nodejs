@@ -316,14 +316,13 @@ class ConsultadeveiculosSDKBase {
     }
 
     /**
-     * Lista todos os endpoints disponíveis com seus slugs
+     * Lista todos os endpoints disponíveis com seus detalhes no mesmo padrão e ordem de _listSlugs()
      * @internal
      */
     _listEndpoints() {
         const endpoints = [];
         
         for (const [slug, endpoint] of this._slugMap) {
-            // Extrai parâmetros do body
             let params = [];
             if (endpoint.body && typeof endpoint.body === 'object') {
                 params = Object.keys(endpoint.body);
@@ -418,7 +417,6 @@ class ConsultadeveiculosSDKBase {
         console.log('   client.help("veiculos")    Filtra endpoints por termo');
         console.log('   client.endpoints()         Lista todos os endpoints');
         console.log('   client.info()              Informações do SDK');
-        console.log('   client.search("placa")     Busca endpoints');
         console.log('');
         
         // Se houver filtro, mostra endpoints filtrados
@@ -533,28 +531,6 @@ class ConsultadeveiculosSDKBase {
     }
 
     /**
-     * Alias para _searchEndpoints (público)
-     */
-    search(pattern) {
-        const results = this._searchEndpoints(pattern);
-        
-        console.log('');
-        console.log(`🔍 Busca: "${pattern}" (${results.length} resultados)`);
-        console.log('');
-        
-        for (const ep of results) {
-            const paramsStr = ep.params && ep.params.length > 0 
-                ? `{ ${ep.params.join(', ')} }` 
-                : '';
-            console.log(`   📌 client.${ep.slug}(${paramsStr})`);
-            console.log(`      ${ep.name}`);
-            console.log('');
-        }
-        
-        return results;
-    }
-
-    /**
      * Modo sandbox
      * @internal
      */
@@ -588,8 +564,8 @@ function createSDKProxy(options) {
                 return value;
             }
             
-            // Métodos auxiliares públicos (help, endpoints, info, search)
-            const publicMethods = ['help', 'endpoints', 'info', 'search', 'options'];
+            // Métodos auxiliares públicos (help, endpoints, info)
+            const publicMethods = ['help', 'endpoints', 'info', 'options'];
             if (publicMethods.includes(prop)) {
                 const value = Reflect.get(target, prop, receiver);
                 if (typeof value === 'function') {

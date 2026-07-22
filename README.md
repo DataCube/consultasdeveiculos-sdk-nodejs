@@ -118,9 +118,6 @@ client.endpoints();
 // Informações do SDK
 client.info();
 // { runtimeVersion, specVersion, sandbox, endpointsCount, namespaces }
-
-// Busca endpoints por termo
-client.search('debitos');  // Busca "debitos" nos slugs e nomes
 ```
 
 #### Exemplo de `client.help()`:
@@ -150,7 +147,6 @@ client.search('debitos');  // Busca "debitos" nos slugs e nomes
    client.help("veiculos")    Filtra endpoints por termo
    client.endpoints()         Lista todos os endpoints
    client.info()              Informações do SDK
-   client.search("placa")     Busca endpoints
 ```
 
 ### Métodos Internos (prefixados com `_`)

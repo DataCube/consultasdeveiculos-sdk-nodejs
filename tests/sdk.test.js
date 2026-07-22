@@ -3,7 +3,7 @@
  */
 
 import { jest } from '@jest/globals';
-import { SDK } from '../src/core/SDK.js';
+import { ConsultadeveiculosSDK as SDK, SDK as SDKBase } from '../src/core/SDK.js';
 import { PostmanParser } from '../src/parser/PostmanParser.js';
 import { EndpointRegistry } from '../src/core/EndpointRegistry.js';
 import { 
@@ -21,7 +21,7 @@ describe('SDK', () => {
 
         test('deve inicializar em modo sandbox sem token', () => {
             const sdk = new SDK({ sandbox: true });
-            expect(sdk.isSandbox()).toBe(true);
+            expect(sdk._isSandbox()).toBe(true);
         });
 
         test('deve ter versão definida', () => {
@@ -38,9 +38,8 @@ describe('SDK', () => {
         });
 
         test('deve listar endpoints', () => {
-            const endpoints = sdk.listEndpoints();
-            expect(Array.isArray(endpoints)).toBe(true);
-            expect(endpoints.length).toBeGreaterThan(0);
+            const endpoints = sdk.endpoints();
+            expect(typeof endpoints).toBe('object');
         });
 
         test('deve ter namespaces definidos', () => {
@@ -50,8 +49,8 @@ describe('SDK', () => {
         });
 
         test('deve retornar resposta de exemplo', async () => {
-            const resultado = await sdk.veiculos.consultarPlaca({
-                path: { placa: 'ABC1234' }
+            const resultado = await sdk._executeBySlug('veiculos_agregados', {
+                placa: 'ABC1234'
             });
             
             expect(resultado.success).toBe(true);

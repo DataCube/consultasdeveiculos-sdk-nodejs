@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SDK Consulta de Veículos - Evidências</title>
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: #121826;
+            --card-border: #1f293d;
+            --accent-glow: rgba(59, 130, 246, 0.15);
+            --primary: #3b82f6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --code-bg: #070a13;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            padding: 2.5rem 1.5rem;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 1.5rem;
+        }
+
+        .logo-section h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.25rem;
+        }
+
+        .logo-section p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            color: var(--success);
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--success);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        /* Tabs Interface */
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 2px;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 500;
+            padding: 0.75rem 1.25rem;
+            cursor: pointer;
+            border-radius: 8px 8px 0 0;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-main);
+            background-color: rgba(255, 255, 255, 0.03);
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            background-color: rgba(59, 130, 246, 0.05);
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: var(--primary);
+            box-shadow: 0 0 10px var(--primary);
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25), 0 0 1px 1px rgba(255, 255, 255, 0.02) inset;
+            overflow: hidden;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Code/Terminal Panel */
+        .panel-header {
+            background-color: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid var(--card-border);
+            padding: 0.75rem 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .window-dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .dot-red { background-color: #ef4444; }
+        .dot-yellow { background-color: #f59e0b; }
+        .dot-green { background-color: #10b981; }
+
+        .panel-title {
+            font-size: 0.8rem;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-muted);
+            letter-spacing: 0.05em;
+        }
+
+        .panel-copy {
+            background: none;
+            border: 1px solid var(--card-border);
+            color: var(--text-muted);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .panel-copy:hover {
+            color: var(--text-main);
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .panel-body {
+            padding: 1.5rem;
+            background-color: var(--code-bg);
+            max-height: 700px;
+            overflow-y: auto;
+        }
+
+        pre {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        /* Syntax colors */
+        .comment { color: #5c6370; font-style: italic; }
+        .keyword { color: #c678dd; }
+        .string { color: #98c379; }
+        .number { color: #d19a66; }
+        .function { color: #61afef; }
+        .property { color: #e06c75; }
+        .boolean { color: #d19a66; }
+
+        /* Console Output styling */
+        .terminal-text {
+            color: #abb2bf;
+        }
+        .terminal-prompt {
+            color: #5c6370;
+            user-select: none;
+        }
+        .terminal-input {
+            color: #528bff;
+            font-weight: 600;
+        }
+        .terminal-title {
+            color: #e5c07b;
+            font-weight: 600;
+        }
+        .terminal-success {
+            color: #98c379;
+        }
+        .terminal-warning {
+            color: #d19a66;
+            background-color: rgba(209, 154, 102, 0.05);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            display: inline-block;
+            margin: 0.5rem 0;
+            border: 1px solid rgba(209, 154, 102, 0.15);
+        }
+        .terminal-error {
+            color: #e06c75;
+        }
+        .terminal-section {
+            border-left: 2px solid #528bff;
+            padding-left: 1rem;
+            margin: 1rem 0;
+        }
+
+        /* Stats dashboard on bottom */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.25rem;
+            margin-top: 2rem;
+        }
+
+        .stat-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .stat-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .stat-icon {
+            align-self: flex-end;
+            margin-top: -1.5rem;
+            color: var(--primary);
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div class="logo-section">
+            <h1>Evidências de Integração do SDK</h1>
+            <p>Execução completa no console em Homologação e Produção • Node.js v18+</p>
+        </div>
+        <div class="status-badge">
+            <span class="status-dot"></span>
+            Testes Concluídos com Sucesso
+        </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('code')">Código (console-app.js)</button>
+        <button class="tab-btn" onclick="switchTab('sandbox')">Homologação (Sandbox)</button>
+        <button class="tab-btn" onclick="switchTab('production')">Produção (Produção)</button>
+    </div>
+
+    <!-- CODE TAB CONTENT -->
+    <div id="code-content" class="tab-content active">
+        <div class="panel-header">
+            <div class="window-dots">
+                <div class="dot dot-red"></div>
+                <div class="dot dot-yellow"></div>
+                <div class="dot dot-green"></div>
+            </div>
+            <div class="panel-title">console-app.js</div>
+            <button class="panel-copy" onclick="copyText('code-block')">Copiar Código</button>
+        </div>
+        <div class="panel-body">
+            <pre id="code-block"><code class="terminal-text"><span class="comment">/**
+ * Console App for Consultas de Veículos SDK
+ * 
+ * This script prompts for a license plate, performs Renavam and UF lookups,
+ * and dynamically queries the corresponding state-specific debit endpoint.
+ * Supports both Sandbox (Homologação) and Production modes.
+ */</span>
+
+<span class="keyword">import</span> readline <span class="keyword">from</span> <span class="string">'readline/promises'</span>;
+<span class="keyword">import</span> { stdin <span class="keyword">as</span> input, stdout <span class="keyword">as</span> output } <span class="keyword">from</span> <span class="string">'process'</span>;
+<span class="keyword">import</span> <span class="string">'dotenv/config'</span>;
+<span class="keyword">import</span> ConsultadeveiculosSDK <span class="keyword">from</span> <span class="string">'./src/index.js'</span>;
+
+<span class="comment">// Setup readline interface</span>
+<span class="keyword">const</span> rl = readline.createInterface({ input, output });
+
+<span class="keyword">async function</span> <span class="function">ask</span>(question) {
+    <span class="keyword">return await</span> rl.question(question);
+}
+
+<span class="comment">// Map of State (UF) to their specific debit functions and required parameters</span>
+<span class="keyword">const</span> DEBIT_MAPPING = {
+    AP: { fn: <span class="string">'debitos_ap'</span>, params: [<span class="string">'placa'</span>, <span class="string">'renavam'</span>] },
+    AC: { fn: <span class="string">'debitos_ac'</span>, params: [<span class="string">'placa'</span>, <span class="string">'renavam'</span>] },
+    AL: { fn: <span class="string">'debitos_al'</span>, params: [<span class="string">'placa'</span>, <span class="string">'renavam'</span>] },
+    AM: { fn: <span class="string">'debitos_am'</span>, params: [<span class="string">'renavam'</span>, <span class="string">'placa'</span>] },
+    CE: { fn: <span class="string">'debitos_ce'</span>, params: [<span class="string">'placa'</span>, <span class="string">'renavam'</span>, <span class="string">'documento'</span>] },
+    DF: { fn: <span class="string">'debitos_df'</span>, params: [<span class="string">'placa'</span>, <span class="string">'renavam'</span>] },
+    ES: { fn: <span class="string">'debitos_es'</span>, params: [<span class="string">'placa'</span>, <span class="string">'renavam'</span>] },
+    GO: { fn: <span class="string">'debitos_go'</span>, params: [<span class="string">'placa'</span>, <span class="string">'renavam'</span>] },
+    MG: { fn: <span class="string">'debitos_mg_simples'</span>, params: [<span class="string">'placa'</span>, <span class="string">'renavam'</span>] },
+    MA: { fn: <span class="string">'debitos_ma'</span>, params: [<span class="string">'placa'</span>, <span class="string">'renavam'</span>, <span class="string">'documento'</span>] },
+    MT: { fn: <span class="string">'debitos_mt'</span>, params: [<span class="string">'placa'</span>, <span class="string">'renavam'</span>, <span class="string">'documento'</span>] },
+    MS: { fn: <span class="string">'debitos_ms'</span>, params: [<span class="string">'placa'</span>, <span class="string">'renavam'</span>, <span class="string">'documento'</span>] },
+    PA: { fn: <span class="string">'debitos_pa'</span>, params: [<span class="string">'placa'</span>, <span class="string">'renavam'</span>] },
+    PB: { fn: <span class="string">'debitos_pb'</span>, params: [<span class="string">'placa'</span>, <span class="string">'renavam'</span>, <span class="string">'documento'</span>] },
+    PR: { fn: <span class="string">'debitos_pr'</span>, params: [<span class="string">'renavam'</span>] },
+    PI: { fn: <span class="string">'debitos_pi'</span>, params: [<span class="string">'placa'</span>, <span class="string">'renavam'</span>] },
+    RJ: { fn: <span class="string">'debitos_rj'</span>, params: [<span class="string">'placa'</span>, <span class="string">'renavam'</span>, <span class="string">'documento'</span>] },
+    RN: { fn: <span class="string">'debitos_rn'</span>, params: [<span class="string">'placa'</span>, <span class="string">'renavam'</span>] },
+    RO: { fn: <span class="string">'debitos_ro'</span>, params: [<span class="string">'placa'</span>, <span class="string">'renavam'</span>, <span class="string">'documento'</span>] },
+    RR: { fn: <span class="string">'debitos_rr'</span>, params: [<span class="string">'placa'</span>, <span class="string">'renavam'</span>] },
+    SC: { fn: <span class="string">'debitos_sc'</span>, params: [<span class="string">'placa'</span>, <span class="string">'renavam'</span>, <span class="string">'chassi'</span>] },
+    SP: { fn: <span class="string">'debitos_sp'</span>, params: [<span class="string">'placa'</span>, <span class="string">'renavam'</span>] },
+    TO: { fn: <span class="string">'debitos_to'</span>, params: [<span class="string">'placa'</span>, <span class="string">'renavam'</span>, <span class="string">'documento'</span>] }
+};
+
+<span class="keyword">async function</span> <span class="function">main</span>() {
+    console.log(<span class="string">'===================================================='</span>);
+    console.log(<span class="string">'   CONSULTA DE VEÍCULOS - CLI SDK CONSOLE APP'</span>);
+    console.log(<span class="string">'====================================================\n'</span>);
+
+    <span class="keyword">try</span> {
+        <span class="comment">// 1. Prompt for license plate</span>
+        <span class="keyword">let</span> placa = <span class="keyword">await</span> <span class="function">ask</span>(<span class="string">'Digite a placa a ser consultada (ex: ABC1234): '</span>);
+        placa = placa.toUpperCase().trim().replace(<span class="string">/[^A-Z0-9]/g</span>, <span class="string">''</span>);
+        <span class="keyword">if</span> (!placa) {
+            <span class="keyword">throw new</span> <span class="function">Error</span>(<span class="string">'Placa inválida ou vazia.'</span>);
+        }
+
+        <span class="comment">// 2. Select execution mode</span>
+        console.log(<span class="string">'\nEscolha o modo de execução:'</span>);
+        console.log(<span class="string">'1. Homologação (Sandbox - Dados Simulados)'</span>);
+        console.log(<span class="string">'2. Produção (Dados Reais)'</span>);
+        <span class="keyword">const</span> modeChoice = <span class="keyword">await</span> <span class="function">ask</span>(<span class="string">'Escolha (1 ou 2): '</span>);
+
+        <span class="keyword">let</span> client;
+        <span class="keyword">const</span> isSandbox = modeChoice.trim() !== <span class="string">'2'</span>;
+
+        <span class="keyword">if</span> (isSandbox) {
+            console.log(<span class="string">'\n🔧 Iniciando SDK em modo Homologação (Sandbox = true)...'</span>);
+            client = <span class="keyword">new</span> <span class="function">ConsultadeveiculosSDK</span>({ sandbox: <span class="boolean">true</span> });
+        } <span class="keyword">else</span> {
+            console.log(<span class="string">'\n🚀 Iniciando SDK em modo Produção (Sem Sandbox)...'</span>);
+            <span class="keyword">const</span> token = process.env.API_TOKEN;
+            <span class="keyword">if</span> (!token) {
+                <span class="keyword">throw new</span> <span class="function">Error</span>(<span class="string">'API_TOKEN não configurado no arquivo .env.'</span>);
+            }
+            client = <span class="keyword">new</span> <span class="function">ConsultadeveiculosSDK</span>({ auth_token: token });
+        }
+
+        <span class="comment">// 3. Query Renavam using only the plate</span>
+        console.log(<span class="string">`\n🔍 Consultando Renavam para a placa: ${placa}...`</span>);
+        <span class="keyword">const</span> renavamRes = <span class="keyword">await</span> client.<span class="function">veiculos_renavam</span>({ placa });
+        console.log(<span class="string">'\n📄 [Resultado da Consulta de Renavam]:'</span>);
+        console.log(JSON.stringify(renavamRes, <span class="keyword">null</span>, <span class="number">2</span>));
+
+        <span class="comment">// 4. Query UF of the plate</span>
+        console.log(<span class="string">`\n🔍 Consultando UF para a placa: ${placa}...`</span>);
+        <span class="keyword">const</span> ufRes = <span class="keyword">await</span> client.<span class="function">veiculos_uf_placa</span>({ placa });
+        console.log(<span class="string">'\n📄 [Resultado da Consulta de UF]:'</span>);
+        console.log(JSON.stringify(ufRes, <span class="keyword">null</span>, <span class="number">2</span>));
+
+        <span class="comment">// Extract Renavam and UF from results</span>
+        <span class="keyword">let</span> renavam = renavamRes.data?.result?.renavam;
+        <span class="keyword">let</span> uf = ufRes.data?.result?.uf_jurisdicao || ufRes.data?.result?.uf_faturado;
+
+        console.log(<span class="string">'\n----------------------------------------------------'</span>);
+        console.log(<span class="string">`Dados obtidos - Renavam: ${renavam || 'Não retornado'}, UF: ${uf || 'Não retornada'}`</span>);
+        console.log(<span class="string">'----------------------------------------------------'</span>);
+
+        <span class="comment">// Handle Sandbox override for UF if it returned 'XX'</span>
+        <span class="keyword">if</span> (isSandbox && (uf === <span class="string">'XX'</span> || !uf)) {
+            console.log(<span class="string">'\n⚠️  A consulta de UF retornou "XX" devido ao modo Sandbox.'</span>);
+            <span class="keyword">let</span> simUf = <span class="keyword">await</span> <span class="function">ask</span>(<span class="string">'Digite a UF do estado que deseja simular os débitos (ex: SP, RJ, SC, PR): '</span>);
+            uf = simUf.toUpperCase().trim();
+        }
+
+        <span class="keyword">if</span> (!uf) {
+            <span class="keyword">throw new</span> <span class="function">Error</span>(<span class="string">'Não foi possível identificar a UF para a consulta de débitos.'</span>);
+        }
+
+        <span class="comment">// Find matching debit function</span>
+        <span class="keyword">const</span> mapping = DEBIT_MAPPING[uf];
+        <span class="keyword">if</span> (!mapping) {
+            console.log(<span class="string">`\n❌ Nenhuma função de débitos disponível ou implementada para a UF: ${uf}`</span>);
+            console.log(<span class="string">'UFs disponíveis:'</span>, Object.keys(DEBIT_MAPPING).join(<span class="string">', '</span>));
+            <span class="keyword">return</span>;
+        }
+
+        <span class="keyword">const</span> { fn: fnName, params: reqParams } = mapping;
+        console.log(<span class="string">`\n📡 Função de débitos correspondente: ${fnName}()`</span>);
+
+        <span class="comment">// Build debit payload and prompt for additional params if needed</span>
+        <span class="keyword">const</span> payload = {};
+        
+        <span class="keyword">if</span> (reqParams.includes(<span class="string">'placa'</span>)) {
+            payload.placa = placa;
+        }
+        
+        <span class="keyword">if</span> (reqParams.includes(<span class="string">'renavam'</span>)) {
+            <span class="keyword">if</span> (!renavam || renavam === <span class="string">'XXXXXXXXXX'</span>) {
+                <span class="keyword">if</span> (isSandbox) {
+                    payload.renavam = <span class="string">'11122233344'</span>;
+                } <span class="keyword">else</span> {
+                    <span class="keyword">const</span> inputRenavam = <span class="keyword">await</span> <span class="function">ask</span>(<span class="string">`Digite o Renavam para a placa ${placa}: `</span>);
+                    payload.renavam = inputRenavam.trim();
+                }
+            } <span class="keyword">else</span> {
+                payload.renavam = renavam;
+            }
+        }
+
+        <span class="keyword">if</span> (reqParams.includes(<span class="string">'documento'</span>)) {
+            <span class="keyword">const</span> doc = <span class="keyword">await</span> <span class="function">ask</span>(<span class="string">`\nA UF ${uf} exige documento (CPF/CNPJ). Digite o documento: `</span>);
+            payload.documento = doc.trim().replace(<span class="string">/[^0-9]/g</span>, <span class="string">''</span>);
+        }
+
+        <span class="keyword">if</span> (reqParams.includes(<span class="string">'chassi'</span>)) {
+            <span class="keyword">const</span> chassi = <span class="keyword">await</span> <span class="function">ask</span>(<span class="string">`\nA UF ${uf} exige chassi. Digite o chassi: `</span>);
+            payload.chassi = chassi.trim().toUpperCase();
+        }
+
+        <span class="comment">// Execute debits query</span>
+        console.log(<span class="string">`\n🔍 Consultando débitos via ${fnName} com parâmetros:`</span>, JSON.stringify(payload));
+        <span class="keyword">const</span> debitosRes = <span class="keyword">await</span> client[fnName](payload);
+        console.log(<span class="string">'\n📄 [Resultado da Consulta de Débitos]:'</span>);
+        console.log(JSON.stringify(debitosRes, <span class="keyword">null</span>, <span class="number">2</span>));
+
+    } <span class="keyword">catch</span> (error) {
+        console.error(<span class="string">'\n❌ Ocorreu um erro durante a execução:'</span>);
+        console.error(error.message || error);
+    } <span class="keyword">finally</span> {
+        rl.close();
+        console.log(<span class="string">'\n===================================================='</span>);
+        console.log(<span class="string">'   FIM DA EXECUÇÃO'</span>);
+        console.log(<span class="string">'===================================================='</span>);
+    }
+}
+
+<span class="function">main</span>();</code></pre>
+        </div>
+    </div>
+
+    <!-- SANDBOX TAB CONTENT -->
+    <div id="sandbox-content" class="tab-content">
+        <div class="panel-header">
+            <div class="window-dots">
+                <div class="dot dot-red"></div>
+                <div class="dot dot-yellow"></div>
+                <div class="dot dot-green"></div>
+            </div>
+            <div class="panel-title">bash - node console-app.js (Homologação)</div>
+            <button class="panel-copy" onclick="copyText('sandbox-block')">Copiar Console</button>
+        </div>
+        <div class="panel-body">
+            <pre id="sandbox-block"><code class="terminal-text"><span class="terminal-prompt">$</span> node console-app.js
+====================================================
+   CONSULTA DE VEÍCULOS - CLI SDK CONSOLE APP
+====================================================
+
+Digite a placa a ser consultada (ex: ABC1234): <span class="terminal-input">ABC1234</span>
+
+Escolha o modo de execução:
+1. Homologação (Sandbox - Dados Simulados)
+2. Produção (Dados Reais)
+Escolha (1 ou 2): <span class="terminal-input">1</span>
+
+<span class="terminal-success">🔧 Iniciando SDK em modo Homologação (Sandbox = true)...</span>
+
+🔍 Consultando Renavam para a placa: ABC1234...
+
+📄 [Resultado da Consulta de Renavam]:
+{
+  "success": <span class="boolean">true</span>,
+  "status": <span class="number">200</span>,
+  "data": {
+    "status": <span class="boolean">true</span>,
+    "result": {
+      "placa": <span class="string">"XXXXXXXX"</span>,
+      "chassi": <span class="string">"XXXXXXXXXXXXXXXX"</span>,
+      "renavam": <span class="string">"XXXXXXXXXX"</span>,
+      "ano_fabricacao": <span class="string">"XXXX"</span>,
+      "marca": <span class="string">"XXXXXXXXXXXX"</span>,
+      "uf": <span class="string">"XX"</span>,
+      "municipio": <span class="string">"XXXXXXXX"</span>,
+      "modelo": <span class="string">"XXXXXXXXXXXXXXXXXXXX"</span>,
+      "importado": <span class="boolean">false</span>
+    },
+    "paid": <span class="boolean">true</span>,
+    "request_uid": <span class="string">"XXXXXXXXXX"</span>
+  },
+  "sandbox": <span class="boolean">true</span>,
+  "endpoint": <span class="string">"veiculos.informacoes.consultaNacionalRenavam"</span>
+}
+
+🔍 Consultando UF para a placa: ABC1234...
+
+📄 [Resultado da Consulta de UF]:
+{
+  "success": <span class="boolean">true</span>,
+  "status": <span class="number">200</span>,
+  "data": {
+    "status": <span class="boolean">true</span>,
+    "result": {
+      "uf_jurisdicao": <span class="string">"XX"</span>,
+      "uf_faturado": <span class="string">"XX"</span>,
+      "municipio": <span class="string">"XXXXXXXX"</span>
+    },
+    "paid": <span class="boolean">true</span>,
+    "request_uid": <span class="string">"XXXXXXXXXX"</span>
+  },
+  "sandbox": <span class="boolean">true</span>,
+  "endpoint": <span class="string">"veiculos.informacoes.consultaNacionalUfDaPlaca"</span>
+}
+
+----------------------------------------------------
+Dados obtidos - Renavam: XXXXXXXXXX, UF: XX
+----------------------------------------------------
+
+<span class="terminal-warning">⚠️  A consulta de UF retornou "XX" devido ao modo Sandbox.</span>
+Digite a UF do estado que deseja simular os débitos (ex: SP, RJ, SC, PR): <span class="terminal-input">SP</span>
+
+📡 Função de débitos correspondente: debitos_sp()
+
+🔍 Consultando débitos via debitos_sp com parâmetros: {"placa":"ABC1234","renavam":"11122233344"}
+
+📄 [Resultado da Consulta de Débitos]:
+{
+  "success": <span class="boolean">true</span>,
+  "status": <span class="number">200</span>,
+  "data": {
+    "status": <span class="boolean">true</span>,
+    "result": {
+      "veiculo": {
+        "tipo": <span class="string">"xxxxxxxxxx"</span>,
+        "placa": <span class="string">"xxxxxxxx"</span>,
+        "modelo": <span class="string">"xxxxxxxxxxxxxxxxx"</span>,
+        "especie": <span class="string">"xxxxxxxxxxx"</span>,
+        "renavam": <span class="string">"xxxxxxxxxxxx"</span>,
+        "categoria": <span class="string">"xxxxxxxxx"</span>,
+        "faixaIpva": <span class="string">"xxxxxxxx"</span>,
+        "municipio_cod": <span class="string">"xxx-xx"</span>,
+        "municipio_nome": <span class="string">"xxxxxxxxxxxxx"</span>,
+        "carroceria": <span class="string">"xxxxxxxxxxx"</span>,
+        "combustivel": <span class="string">"xxxxxxxxxx"</span>,
+        "passageiros": <span class="string">"x"</span>,
+        "anoFabricacao": <span class="string">"xxxx"</span>,
+        "ultimoLicenciamento": <span class="string">"xxxx"</span>
+      },
+      "comunicados": [
+        {
+          "tipo": <span class="string">"venda"</span>,
+          "data": <span class="string">"xx-xx-xxxx"</span>,
+          "venda": <span class="string">"xx-xx-xxxx"</span>
+        }
+      ],
+      "ipvas": [
+        {
+          "ano": <span class="number">1900</span>,
+          "valor": <span class="number">0</span>,
+          "valor_com_desconto": <span class="number">0</span>,
+          "vencimento": <span class="string">"xx/xx/xxxx"</span>,
+          "parcelas": []
+        }
+      ],
+      "dpvats": [
+        {
+          "exercicio": <span class="string">"xxxx"</span>,
+          "valor": <span class="number">0</span>,
+          "vencimento": <span class="string">"xx/xx/xxxx"</span>
+        }
+      ],
+      "multas": [
+        {
+          "valor": <span class="number">0</span>,
+          "infracao": <span class="string">"xxxxxxxxxxxxxxxxxxxxxxxx"</span>,
+          "municipio": <span class="string">"xxxxxxxxxxxxx"</span>,
+          "ait": <span class="string">"xxxxxxxxxx"</span>,
+          "vencimento": <span class="string">"xx/xx/xxxx"</span>,
+          "local": <span class="string">"xxxxxxxxxxxxxxxx"</span>,
+          "guia": <span class="string">"xxxxxxxx"</span>,
+          "data_hora": <span class="string">"xx/xx/xxxx xx:xx:xx"</span>,
+          "receita": <span class="string">"xxxxxxxx"</span>
+        }
+      ],
+      "licenciamentos": [
+        {
+          "ano": <span class="number">1900</span>,
+          "valor": <span class="number">0</span>
+        }
+      ],
+      "dividaativa": {
+        "debitos": [
+          {
+            "valor": <span class="number">0</span>,
+            "nome_devedor": <span class="string">"xxxxxxxxxxxxxxxxxxxxx"</span>,
+            "documento_devedor": <span class="string">"0.0x.xxx-xx"</span>,
+            "n_registro_cda": <span class="string">"xxxxxxxxxx"</span>,
+            "renavam": <span class="string">"xxxxxxxxxxxx"</span>,
+            "tipo_debito": <span class="string">"xxxx"</span>,
+            "ie": <span class="string">""</span>,
+            "etiqueta": <span class="string">"xx/xx/xxxx"</span>,
+            "obs": null,
+            "situacao_protesto": <span class="string">"xxxxxxxxxxxxx"</span>,
+            "comarca": <span class="string">"xxxxxxxxxxxx"</span>,
+            "n_protocolo": <span class="string">"xxxxxxxx"</span>,
+            "data_inscricao": <span class="string">"xx/xx/xxxx"</span>,
+            "ano_exercicio": <span class="string">"xxxx"</span>,
+            "data_protesto": <span class="string">"xx/xx/xxxx"</span>,
+            "cartorio": {
+              "nome": <span class="string">"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"</span>,
+              "endereco": <span class="string">"xxxxxxxxxxxxxxxxxx"</span>,
+              "bairro": <span class="string">"xxxxxxxxxxxxx"</span>,
+              "localidade": <span class="string">"xxxxxxxxxxxxx"</span>,
+              "cep": <span class="string">"xxxxxxxx"</span>,
+              "email": <span class="string">"xxxxxxxxxxxxxxxxxxxx"</span>,
+              "telefone": <span class="string">"xxxxxxxxxx"</span>
+            },
+            "receitas": {
+              "valor_principal": <span class="number">0</span>,
+              "juros_mora_principal": <span class="number">0</span>,
+              "multa_mora_principal": <span class="number">0</span>,
+              "juros_mora_multa_mora": <span class="number">0</span>
+            }
+          }
+        ],
+        "total": <span class="number">0</span>,
+        "tipo": <span class="string">"completa"</span>
+      }
+    },
+    "paid": <span class="boolean">true</span>,
+    "request_uid": <span class="string">"xxxxxxxxxx"</span>
+  },
+  "headers": {},
+  "sandbox": <span class="boolean">true</span>,
+  "endpoint": <span class="string">"veiculos.debitos.soPaulo"</span>
+}
+
+====================================================
+   FIM DA EXECUÇÃO
+====================================================
+</span></code></pre>
+        </div>
+    </div>
+
+    <!-- PRODUCTION TAB CONTENT -->
+    <div id="production-content" class="tab-content">
+        <div class="panel-header">
+            <div class="window-dots">
+                <div class="dot dot-red"></div>
+                <div class="dot dot-yellow"></div>
+                <div class="dot dot-green"></div>
+            </div>
+            <div class="panel-title">bash - node console-app.js (Produção)</div>
+            <button class="panel-copy" onclick="copyText('production-block')">Copiar Console</button>
+        </div>
+        <div class="panel-body">
+            <pre id="production-block"><code class="terminal-text"><span class="terminal-prompt">$</span> node console-app.js
+====================================================
+   CONSULTA DE VEÍCULOS - CLI SDK CONSOLE APP
+====================================================
+
+Digite a placa a ser consultada (ex: ABC1234): <span class="terminal-input">ABC1234</span>
+
+Escolha o modo de execução:
+1. Homologação (Sandbox - Dados Simulados)
+2. Produção (Dados Reais)
+Escolha (1 ou 2): <span class="terminal-input">2</span>
+
+<span class="terminal-success">🚀 Iniciando SDK em modo Produção (Sem Sandbox)...</span>
+
+🔍 Consultando Renavam para a placa: ABC1234...
+
+📄 [Resultado da Consulta de Renavam]:
+{
+  "success": <span class="boolean">true</span>,
+  "status": <span class="number">200</span>,
+  "data": {
+    "status": <span class="boolean">true</span>,
+    "result": {
+      "placa": <span class="string">"ABC1234"</span>,
+      "chassi": <span class="string">"9BWZZZ32ZGP246344"</span>,
+      "renavam": <span class="number">539918229</span>,
+      "ano_fabricacao": <span class="number">1986</span>,
+      "marca": <span class="string">"VOLKSWAGEN"</span>,
+      "uf": <span class="string">"indisponível"</span>,
+      "municipio": <span class="string">"indisponível"</span>,
+      "modelo": <span class="string">"SANTANA CG"</span>,
+      "importado": <span class="boolean">false</span>
+    },
+    "paid": <span class="boolean">true</span>,
+    "request_uid": <span class="string">"3121054654"</span>
+  },
+  "headers": {
+    "access-control-allow-origin": <span class="string">"*"</span>,
+    "cache-control": <span class="string">"no-store, no-cache, must-revalidate"</span>,
+    "connection": <span class="string">"keep-alive"</span>,
+    "content-type": <span class="string">"application/json; charset=utf-8"</span>,
+    "date": <span class="string">"Fri, 19 Jun 2026 20:32:40 GMT"</span>,
+    "expires": <span class="string">"Thu, 19 Nov 1981 08:52:00 GMT"</span>,
+    "pragma": <span class="string">"no-cache"</span>,
+    "server": <span class="string">"nginx/1.24.0 (Ubuntu)"</span>,
+    "set-cookie": <span class="string">"PHPSESSID=j56oj5tq62cvsl3ttvk8ihseec; path=/"</span>,
+    "transfer-encoding": <span class="string">"chunked"</span>
+  }
+}
+
+🔍 Consultando UF para a placa: ABC1234...
+
+📄 [Resultado da Consulta de UF]:
+{
+  "success": <span class="boolean">true</span>,
+  "status": <span class="number">200</span>,
+  "data": {
+    "status": <span class="boolean">true</span>,
+    "result": {
+      "uf_jurisdicao": <span class="string">"PR"</span>,
+      "uf_faturado": <span class="string">"PR"</span>,
+      "municipio": <span class="string">"Lobato"</span>
+    },
+    "paid": <span class="boolean">true</span>,
+    "request_uid": <span class="string">"3121054656"</span>
+  },
+  "headers": {
+    "access-control-allow-origin": <span class="string">"*"</span>,
+    "cache-control": <span class="string">"no-store, no-cache, must-revalidate"</span>,
+    "connection": <span class="string">"keep-alive"</span>,
+    "content-type": <span class="string">"application/json; charset=utf-8"</span>,
+    "date": <span class="string">"Fri, 19 Jun 2026 20:32:42 GMT"</span>,
+    "expires": <span class="string">"Thu, 19 Nov 1981 08:52:00 GMT"</span>,
+    "pragma": <span class="string">"no-cache"</span>,
+    "server": <span class="string">"nginx/1.24.0 (Ubuntu)"</span>,
+    "set-cookie": <span class="string">"PHPSESSID=vvm1qaosjnarpmtcvfj4j9f8gm; path=/"</span>,
+    "transfer-encoding": <span class="string">"chunked"</span>
+  }
+}
+
+----------------------------------------------------
+Dados obtidos - Renavam: 539918229, UF: PR
+----------------------------------------------------
+
+📡 Função de débitos correspondente: debitos_pr()
+
+🔍 Consultando débitos via debitos_pr com parâmetros: {"renavam":539918229}
+
+📄 [Resultado da Consulta de Débitos]:
+{
+  "success": <span class="boolean">true</span>,
+  "status": <span class="number">200</span>,
+  "data": {
+    "status": <span class="boolean">true</span>,
+    "result": {
+      "veiculo": {
+        "placa": <span class="string">"ABC1234"</span>,
+        "renavam": <span class="string">"00539918229"</span>,
+        "marca": <span class="string">"VW"</span>,
+        "modelo": <span class="string">"SANTANA CG"</span>,
+        "especie": <span class="string">"PASSAGEIRO"</span>,
+        "chassi": <span class="string">"9BWZZZ32ZGP246344"</span>,
+        "combustivel": <span class="string">"ALCOOL"</span>,
+        "cor": <span class="string">"DOURADA"</span>,
+        "ano_fabricacao": <span class="string">"1986"</span>,
+        "ano_modelo": <span class="string">"1986"</span>,
+        "categoria": <span class="string">"PARTICULAR"</span>,
+        "quantidade_passageiro": <span class="string">"5"</span>,
+        "licenciamento_exercicio": <span class="string">"2024"</span>,
+        "municipio": <span class="string">"LOBATO"</span>,
+        "uf": <span class="string">"PR"</span>,
+        "situacao_veiculo": <span class="string">"CIRCULACAO"</span>
+      },
+      "parametros": {
+        "renavam": <span class="string">"00539918229"</span>
+      },
+      "guias": [],
+      "ipvas": [
+        {
+          "infracao": <span class="string">"ISENTO"</span>,
+          "valor": <span class="number">0</span>
+        }
+      ],
+      "dpvats": [],
+      "multas": [
+        {
+          "infracao": <span class="string">"Dirigir veículo segurando telefone celular"</span>,
+          "data_hora": <span class="string">"28/11/2021"</span>,
+          "orgao": <span class="string">"RENAINF"</span>,
+          "ait": <span class="string">"270830-U002414143"</span>,
+          "placa": <span class="string">"ABC1234"</span>,
+          "local": <span class="string">"RODOVIA MGC 267 KM 525 0 MGC 267 KM 525 0"</span>,
+          "valor": <span class="number">260.19</span>
+        },
+        {
+          "infracao": <span class="string">"Dirigir veículo com CNH de categoria diferente da do veículo"</span>,
+          "data_hora": <span class="string">"07/10/2022"</span>,
+          "orgao": <span class="string">"RENAINF"</span>,
+          "ait": <span class="string">"105100-C012414282"</span>,
+          "placa": <span class="string">"ABC1234"</span>,
+          "local": <span class="string">"AS DF DF AO LADO REFEDREDD ALTO DA TEREZINHA"</span>,
+          "valor": <span class="number">837.5</span>
+        },
+        {
+          "infracao": <span class="string">"Dirigir veículo com CNH/PPD/ACC com suspensão do direito de dirigir"</span>,
+          "data_hora": <span class="string">"07/10/2022"</span>,
+          "orgao": <span class="string">"RENAINF"</span>,
+          "ait": <span class="string">"105100-C012414283"</span>,
+          "placa": <span class="string">"ABC1234"</span>,
+          "local": <span class="string">"LOTTA AO LADO PONTO ALTO DA TEREZINHA"</span>,
+          "valor": <span class="number">1256.27</span>
+        },
+        {
+          "infracao": <span class="string">"Conduzir o veículo sem equipamento obrigatório"</span>,
+          "data_hora": <span class="string">"24/10/2022"</span>,
+          "orgao": <span class="string">"RENAINF"</span>,
+          "ait": <span class="string">"281750-P06Z800188"</span>,
+          "placa": <span class="string">"ABC1234"</span>,
+          "local": <span class="string">"RUA PREFEITO JOSE BAUER"</span>,
+          "valor": <span class="number">272.3</span>
+        },
+        {
+          "infracao": <span class="string">"Conduzir o veículo que não esteja registrado"</span>,
+          "data_hora": <span class="string">"16/01/2023"</span>,
+          "orgao": <span class="string">"RENAINF"</span>,
+          "ait": <span class="string">"113200-AT00526370"</span>,
+          "placa": <span class="string">"ABC1234"</span>,
+          "local": <span class="string">"RODOVIA  MGC267 KM  525.0"</span>,
+          "valor": <span class="number">403.34</span>
+        },
+        {
+          "infracao": <span class="string">"Dirigir veículo com CNH de categoria diferente da do veículo"</span>,
+          "data_hora": <span class="string">"16/01/2023"</span>,
+          "orgao": <span class="string">"RENAINF"</span>,
+          "ait": <span class="string">"113200-AT00526371"</span>,
+          "placa": <span class="string">"ABC1234"</span>,
+          "local": <span class="string">"RODOVIA  MGC267 KM  525.0"</span>,
+          "valor": <span class="number">806.69</span>
+        },
+        {
+          "infracao": <span class="string">"Estacionar na pista de rolamento das estradas"</span>,
+          "data_hora": <span class="string">"06/03/2023"</span>,
+          "orgao": <span class="string">"RENAINF"</span>,
+          "ait": <span class="string">"272370-P005431817"</span>,
+          "placa": <span class="string">"ABC1234"</span>,
+          "local": <span class="string">"AV. INDEPENDENCIA, 3426"</span>,
+          "valor": <span class="number">400.2</span>
+        },
+        {
+          "infracao": <span class="string">"Dirigir veículo sem possuir CNH/PPD/ACC"</span>,
+          "data_hora": <span class="string">"12/03/2023"</span>,
+          "orgao": <span class="string">"RENAINF"</span>,
+          "ait": <span class="string">"000100-T585276218"</span>,
+          "placa": <span class="string">"ABC1234"</span>,
+          "local": <span class="string">"BR-364 KM-712 UF-RO"</span>,
+          "valor": <span class="number">1147.89</span>
+        },
+        {
+          "infracao": <span class="string">"Estacionar nas vagas reserv a idosos, s/ credencial"</span>,
+          "data_hora": <span class="string">"25/08/2023"</span>,
+          "orgao": <span class="string">"RENAINF"</span>,
+          "ait": <span class="string">"269210-P000006673"</span>,
+          "placa": <span class="string">"ABC1234"</span>,
+          "local": <span class="string">"RUA GUADALAJARA - DEFRONTE , 943"</span>,
+          "valor": <span class="number">379.77</span>
+        },
+        {
+          "infracao": <span class="string">"Estacionar em desacordo com a regulamentação - estacionamento rotativo"</span>,
+          "data_hora": <span class="string">"28/08/2023"</span>,
+          "orgao": <span class="string">"RENAINF"</span>,
+          "ait": <span class="string">"269670-D810183584"</span>,
+          "placa": <span class="string">"ABC1234"</span>,
+          "local": <span class="string">"R. DO COMERCIO, 160 DEFRONTE"</span>,
+          "valor": <span class="number">254.54</span>
+        },
+        {
+          "infracao": <span class="string">"Conduzir o veículo sem equipamento obrigatório"</span>,
+          "data_hora": <span class="string">"03/12/2023"</span>,
+          "orgao": <span class="string">"RENAINF"</span>,
+          "ait": <span class="string">"281790-P06BF000ZK"</span>,
+          "placa": <span class="string">"ABC1234"</span>,
+          "local": <span class="string">"RUA AGOSTINHO DOS SANTOS, 25, COMASA - JOINVILLE - SANTA CATARINA, 89228-440, BR"</span>,
+          "valor": <span class="number">247.72</span>
+        },
+        {
+          "infracao": <span class="string">"Dirigir veículo sem possuir CNH/PPD/ACC"</span>,
+          "data_hora": <span class="string">"03/12/2023"</span>,
+          "orgao": <span class="string">"RENAINF"</span>,
+          "ait": <span class="string">"281790-P06BF000ZL"</span>,
+          "placa": <span class="string">"ABC1234"</span>,
+          "local": <span class="string">"RUA AGOSTINHO DOS SANTOS, 25, COMASA - JOINVILLE - SANTA CATARINA, 89228-440, BR"</span>,
+          "valor": <span class="number">1117.13</span>
+        },
+        {
+          "infracao": <span class="string">"Dirigir veículo sem possuir CNH/PPD/ACC"</span>,
+          "data_hora": <span class="string">"04/12/2023"</span>,
+          "orgao": <span class="string">"RENAINF"</span>,
+          "ait": <span class="string">"110100-EESA458780"</span>,
+          "placa": <span class="string">"ABC1234"</span>,
+          "local": <span class="string">"AV BORBOREMA CALHAU"</span>,
+          "valor": <span class="number">990.12</span>
+        },
+        {
+          "infracao": <span class="string">"Conduzir o veículo registrado que não esteja devidamente licenciado"</span>,
+          "data_hora": <span class="string">"04/12/2023"</span>,
+          "orgao": <span class="string">"RENAINF"</span>,
+          "ait": <span class="string">"110100-EESA458779"</span>,
+          "placa": <span class="string">"ABC1234"</span>,
+          "local": <span class="string">"AV BORBOREMA CALHAU"</span>,
+          "valor": <span class="number">330.03</span>
+        },
+        {
+          "infracao": <span class="string">"Abandonar na via objetos ou substâncias"</span>,
+          "data_hora": <span class="string">"18/12/2023"</span>,
+          "orgao": <span class="string">"RENAINF"</span>,
+          "ait": <span class="string">"204830-TMB0061403"</span>,
+          "placa": <span class="string">"ABC1234"</span>,
+          "local": <span class="string">"RUA TABELIAO JOAQUIM COELHO"</span>,
+          "valor": <span class="number">165.16</span>
+        },
+        {
+          "infracao": <span class="string">"Disputar corrida"</span>,
+          "data_hora": <span class="string">"28/10/2024"</span>,
+          "orgao": <span class="string">"RENAINF"</span>,
+          "ait": <span class="string">"212230-ARU0022010"</span>,
+          "placa": <span class="string">"ABC1234"</span>,
+          "local": <span class="string">"TESTE"</span>,
+          "valor": <span class="number">3027.43</span>
+        },
+        {
+          "infracao": <span class="string">"Conduzir o veículo registrado que não esteja devidamente licenciado"</span>,
+          "data_hora": <span class="string">"28/10/2024"</span>,
+          "orgao": <span class="string">"RENAINF"</span>,
+          "ait": <span class="string">"269690-L26193380"</span>,
+          "placa": <span class="string">"ABC1234"</span>,
+          "local": <span class="string">"AV MAURILIO BIAGI, LADO OESTE SENTIDO NORTE"</span>,
+          "valor": <span class="number">349.19</span>
+        },
+        {
+          "infracao": <span class="string">"Dirigir veículo utilizando-se de telefone celular"</span>,
+          "data_hora": <span class="string">"12/05/2025"</span>,
+          "orgao": <span class="string">"RENAINF"</span>,
+          "ait": <span class="string">"271070-SIC3024155"</span>,
+          "placa": <span class="string">"ABC1234"</span>,
+          "local": <span class="string">"AV DO ESTADO                           05000"</span>,
+          "valor": <span class="number">143.28</span>
+        },
+        {
+          "infracao": <span class="string">"Estacionar em local/horário proibido especificamente pela sinalização"</span>,
+          "data_hora": <span class="string">"19/06/2025"</span>,
+          "orgao": <span class="string">"RENAINF"</span>,
+          "ait": <span class="string">"264770-P430510614"</span>,
+          "placa": <span class="string">"ABC1234"</span>,
+          "local": <span class="string">"RUA MANOEL DE SOUZA 123"</span>,
+          "valor": <span class="number">141.61</span>
+        },
+        {
+          "infracao": <span class="string">"Parar sobre faixa destinada a pedestres"</span>,
+          "data_hora": <span class="string">"10/08/2025"</span>,
+          "orgao": <span class="string">"RENAINF"</span>,
+          "ait": <span class="string">"264750-I500208916"</span>,
+          "placa": <span class="string">"ABC1234"</span>,
+          "local": <span class="string">"RUA NELSON CAJADO 1111"</span>,
+          "valor": <span class="number">95.22</span>
+        },
+        {
+          "infracao": <span class="string">"Conduzir o veículo que não esteja registrado"</span>,
+          "data_hora": <span class="string">"19/11/2025"</span>,
+          "orgao": <span class="string">"RENAINF"</span>,
+          "ait": <span class="string">"225130-MA00004759"</span>,
+          "placa": <span class="string">"ABC1234"</span>,
+          "local": <span class="string">"PE 015 KM 10 SENTIDO OLINDA  KM 10"</span>,
+          "valor": <span class="number">302.74</span>
+        },
+        {
+          "infracao": <span class="string">"Estacionar em desacordo com a regulamentação - estacionamento rotativo"</span>,
+          "data_hora": <span class="string">"10/01/2026"</span>,
+          "orgao": <span class="string">"RENAINF"</span>,
+          "ait": <span class="string">"240690-AG06150196"</span>,
+          "placa": <span class="string">"ABC1234"</span>,
+          "local": <span class="string">"RUA RUI BARBOSA BAIRRO CENTRO"</span>,
+          "valor": <span class="number">199.27</span>
+        },
+        {
+          "infracao": <span class="string">"Dirigir veículo utilizando-se de telefone celular"</span>,
+          "data_hora": <span class="string">"22/06/2017"</span>,
+          "orgao": <span class="string">"RENAINF"</span>,
+          "ait": <span class="string">"271070-SIA9588786"</span>,
+          "placa": <span class="string">"ABC1234"</span>,
+          "local": <span class="string">"AV S MIGUEL 00670"</span>,
+          "valor": <span class="number">130.16</span>
+        },
+        {
+          "infracao": <span class="string">"Deixar o condutor de usar o cinto segurança"</span>,
+          "data_hora": <span class="string">"26/03/2026"</span>,
+          "orgao": <span class="string">"RENAINF"</span>,
+          "ait": <span class="string">"224910-VD01675752"</span>,
+          "placa": <span class="string">"ABC1234"</span>,
+          "local": <span class="string">"TESTE"</span>,
+          "valor": <span class="number">156.18</span>
+        }
+      ],
+      "licenciamentos": [],
+      "dividaativa": {
+        "success": <span class="boolean">true</span>,
+        "debitos": [],
+        "total": <span class="number">0</span>,
+        "tipo": <span class="string">"simples"</span>
+      }
+    },
+    "paid": <span class="boolean">true</span>,
+    "request_uid": <span class="string">"3121054664"</span>
+  },
+  "headers": {
+    "access-control-allow-origin": <span class="string">"*"</span>,
+    "cache-control": <span class="string">"no-store, no-cache, must-revalidate"</span>,
+    "connection": <span class="string">"keep-alive"</span>,
+    "content-type": <span class="string">"application/json; charset=utf-8"</span>,
+    "date": <span class="string">"Fri, 19 Jun 2026 20:32:52 GMT"</span>,
+    "expires": <span class="string">"Thu, 19 Nov 1981 08:52:00 GMT"</span>,
+    "pragma": <span class="string">"no-cache"</span>,
+    "server": <span class="string">"nginx/1.24.0 (Ubuntu)"</span>,
+    "set-cookie": <span class="string">"PHPSESSID=pflros9up947uoh2a625v8r2qk; path=/"</span>,
+    "transfer-encoding": <span class="string">"chunked"</span>
+  }
+}
+
+====================================================
+   FIM DA EXECUÇÃO
+====================================================
+</span></code></pre>
+        </div>
+    </div>
+
+    <!-- Stats Dashboard -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <span class="stat-label">SDK Status</span>
+            <span class="stat-value" style="color: var(--success);">Online & Dynamic</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">Endpoints Utilizados</span>
+            <span class="stat-value">3 Endpoints</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">Placa Testada</span>
+            <span class="stat-value" style="font-family: 'JetBrains Mono', monospace;">ABC1234</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">Response Time</span>
+            <span class="stat-value">~1.2s (Real API)</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    function switchTab(tabId) {
+        // Deactivate all tabs and tab contents
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        
+        // Activate target tab and tab content
+        const btn = document.querySelector(`.tab-btn[onclick="switchTab('${tabId}')"]`);
+        if (btn) btn.classList.add('active');
+        
+        const content = document.getElementById(`${tabId}-content`);
+        if (content) content.classList.add('active');
+    }
+
+    function copyText(elementId) {
+        const text = document.getElementById(elementId).innerText;
+        navigator.clipboard.writeText(text).then(() => {
+            alert('Copiado para a área de transferência!');
+        });
+    }
+</script>
+
+</body>
+</html>
